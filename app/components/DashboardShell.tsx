@@ -5,7 +5,7 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconDashboard, IconSettings, IconUsers, IconLogout, IconBell, IconClock,
   IconSearch, IconMail, IconMoon, IconChevronDown, IconFile, IconLock,
-  IconClipboardCheck, IconComponents, IconStar, IconChartBar, IconForms, IconTable, IconMap, IconLayoutGrid
+  IconClipboardCheck, IconComponents, IconStar, IconChartBar, IconForms, IconTable, IconMap, IconLayoutGrid, IconAppWindow
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -120,6 +120,16 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         />
         <NavLink
           component={Link}
+          href="/application"
+          label="Application"
+          leftSection={<IconAppWindow size={18} stroke={1.5} />}
+          active={pathname === '/application'}
+          onClick={toggle}
+          variant="filled"
+          className="custom-navlink"
+        />
+        <NavLink
+          component={Link}
           href="/settings"
           label="Settings (Pages)"
           leftSection={<IconFile size={18} stroke={1.5} />}
@@ -138,12 +148,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           onClick={toggle}
           variant="filled"
           className="custom-navlink"
-        />
-        <NavLink
-          label="Authentication"
-          leftSection={<IconLock size={18} stroke={1.5} />}
-          className="custom-navlink"
-          rightSection={<IconChevronDown size={14} color="white" />}
         />
 
       </AppShell.Navbar>
