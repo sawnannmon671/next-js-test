@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { Roboto } from "next/font/google";
 import localFont from "next/font/local";
+
 import "./globals.css";
 import '@mantine/core/styles.css';
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { ColorSchemeScript } from '@mantine/core';
 import { DashboardShell } from "./components/DashboardShell";
+import { ThemeProvider } from './context/ThemeContext';
+import { ThemedMantineProvider } from './components/ThemedMantineProvider';
+
 
 
 const geistSans = localFont({
@@ -16,6 +21,14 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+
+const roboto = Roboto({
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+  variable: '--font-roboto',
+});
+
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,12 +45,14 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <MantineProvider>
-          <DashboardShell>
-            {children}
-          </DashboardShell>
-        </MantineProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`}>
+        <ThemeProvider>
+          <ThemedMantineProvider>
+            <DashboardShell>
+              {children}
+            </DashboardShell>
+          </ThemedMantineProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -5,18 +5,23 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconDashboard, IconSettings, IconUsers, IconLogout, IconBell, IconClock,
   IconSearch, IconMail, IconMoon, IconChevronDown, IconFile, IconLock,
-  IconClipboardCheck, IconComponents, IconStar, IconChartBar, IconForms, IconTable, IconMap, IconLayoutGrid, IconAppWindow
+  IconClipboardCheck, IconComponents, IconStar, IconChartBar, IconForms, IconTable, IconMap, IconLayoutGrid, IconAppWindow,
+  IconPalette
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAppTheme } from '../context/ThemeContext';
+
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const pathname = usePathname();
+  const { primaryColor } = useAppTheme();
 
-  // Color theme inspired by the image
-  const darkNavBg = "#007D9C";
+  // Dynamic theme colors
+  const darkNavBg = primaryColor;
   const lightGreyBg = "#F4F7FC";
+
 
   return (
     <AppShell
@@ -64,8 +69,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <Menu shadow="md" width={200}>
               <Menu.Target>
                 <Group gap="xs" style={{ cursor: 'pointer', marginLeft: 10 }}>
-                  <Avatar radius="xl" size="sm" src="https://i.pravatar.cc/150?img=11" />
-                  <Text size="sm" fw={500} visibleFrom="sm" c="dark">Thomson</Text>
+                  <Avatar radius="xl" size="sm" src="https://i.pravatar.cc/150?img=5" />
+                  <Text size="sm" fw={500} visibleFrom="sm" c="dark">Jennifer</Text>
                   <IconChevronDown size={14} color="gray" />
                 </Group>
               </Menu.Target>
@@ -104,14 +109,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         `}} />
         <Group mb="xl" px="sm">
           <IconClipboardCheck color="white" size={28} />
-          <Title order={4} c="white" style={{ fontFamily: 'monospace' }}>Approval System</Title>
+          <Title order={4} c="white" style={{ fontFamily: 'var(--font-roboto), sans-serif' }}>Approval System</Title>
         </Group>
         
         <NavLink
           component={Link}
           href="/"
           label="Dashboards"
-          leftSection={<IconDashboard size={18} stroke={1.5} />}
+          leftSection={<IconPalette size={18} stroke={1.5} />}
           active={pathname === '/'}
           onClick={toggle}
           variant="filled"
@@ -132,7 +137,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           component={Link}
           href="/settings"
           label="Settings (Pages)"
-          leftSection={<IconFile size={18} stroke={1.5} />}
+          leftSection={<IconSettings size={18} stroke={1.5} />}
           active={pathname === '/settings'}
           onClick={toggle}
           variant="filled"

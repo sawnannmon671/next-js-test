@@ -2,9 +2,13 @@
 
 import { Title, Text, Card, Grid, Group, Breadcrumbs, Anchor, Flex, Paper, Box, Table, Badge, Avatar, Divider } from '@mantine/core';
 import { IconEye, IconWallet, IconShoppingBag, IconUsersGroup } from '@tabler/icons-react';
+import { useAppTheme } from './context/ThemeContext';
+
 
 export default function Home() {
+  const { primaryColor } = useAppTheme();
   const items = [
+
     { title: 'Approval System', href: '#' },
     { title: 'Dashboards', href: '#' },
     { title: 'Welcome!', href: '#' },
@@ -52,7 +56,7 @@ export default function Home() {
 
         {/* Orders */}
         <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-          <Card padding="lg" radius="md" bg="#007D9C" c="white" style={{ position: 'relative', overflow: 'hidden' }}>
+          <Card padding="lg" radius="md" bg={primaryColor} c="white" style={{ position: 'relative', overflow: 'hidden' }}>
             <Text size="xs" fw={700} tt="uppercase" mb="xs">ORDERS</Text>
             <Title order={1} fw={400} mb="xs">753</Title>
             <Group gap="xs">
@@ -91,12 +95,12 @@ export default function Home() {
             
             {/* Very rough placeholder for the bar chart look using Flex */}
             <Flex h={250} align="flex-end" justify="space-around" mt="xl" mx="xl" style={{ borderBottom: '1px solid #eee' }}>
-              <div style={{ width: 30, height: '60%', backgroundColor: '#007D9C' }} />
-              <div style={{ width: 30, height: '80%', backgroundColor: '#007D9C' }} />
-              <div style={{ width: 30, height: '50%', backgroundColor: '#007D9C' }} />
-              <div style={{ width: 30, height: '90%', backgroundColor: '#007D9C' }} />
-              <div style={{ width: 30, height: '40%', backgroundColor: '#007D9C' }} />
-              <div style={{ width: 30, height: '70%', backgroundColor: '#007D9C' }} />
+              <div style={{ width: 30, height: '60%', backgroundColor: primaryColor }} />
+              <div style={{ width: 30, height: '80%', backgroundColor: primaryColor }} />
+              <div style={{ width: 30, height: '50%', backgroundColor: primaryColor }} />
+              <div style={{ width: 30, height: '90%', backgroundColor: primaryColor }} />
+              <div style={{ width: 30, height: '40%', backgroundColor: primaryColor }} />
+              <div style={{ width: 30, height: '70%', backgroundColor: primaryColor }} />
             </Flex>
           </Paper>
         </Grid.Col>
@@ -132,10 +136,10 @@ export default function Home() {
             </Group>
             <Group justify="flex-end" mb="md">
               <div style={{ textAlign: 'right' }}>
-                <Text size="sm" fw={500}>Thomson</Text>
-                <Text size="xs" bg="#E6F2F5" c="#007D9C" p={8} style={{ borderRadius: 8 }}>Hi, How are you? What about our next...</Text>
+                <Text size="sm" fw={500}>Jennifer</Text>
+                <Text size="xs" bg="rgba(0,0,0,0.05)" c={primaryColor} p={8} style={{ borderRadius: 8, border: `1px solid ${primaryColor}22` }}>Hi, How are you? What about our next...</Text>
               </div>
-              <Avatar radius="xl" src="https://i.pravatar.cc/150?img=11" />
+              <Avatar radius="xl" src="https://i.pravatar.cc/150?img=5" />
             </Group>
           </Paper>
         </Grid.Col>
@@ -163,7 +167,7 @@ export default function Home() {
                   <Table.Td>Approval System Admin v1</Table.Td>
                   <Table.Td>01/01/2015</Table.Td>
                   <Table.Td>26/04/2015</Table.Td>
-                  <Table.Td><Badge color="#007D9C" variant="light">Released</Badge></Table.Td>
+                  <Table.Td><Badge color={primaryColor} variant="light">Released</Badge></Table.Td>
                   <Table.Td>Techzaa Studio</Table.Td>
                 </Table.Tr>
                 <Table.Tr>
@@ -171,7 +175,7 @@ export default function Home() {
                   <Table.Td>Approval System Frontend v1</Table.Td>
                   <Table.Td>01/01/2015</Table.Td>
                   <Table.Td>26/04/2015</Table.Td>
-                  <Table.Td><Badge color="#007D9C" variant="light">Released</Badge></Table.Td>
+                  <Table.Td><Badge color={primaryColor} variant="light">Released</Badge></Table.Td>
                   <Table.Td>Techzaa Studio</Table.Td>
                 </Table.Tr>
               </Table.Tbody>
