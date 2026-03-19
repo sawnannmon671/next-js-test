@@ -9,14 +9,20 @@ import {
   IconPalette
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAppTheme } from '../context/ThemeContext';
 
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const pathname = usePathname();
+  const router = useRouter();
   const { primaryColor } = useAppTheme();
+
+  const handleLogout = () => {
+    // Here you would clear cookies/localstorage
+    router.push('/login');
+  };
 
   // Dynamic theme colors
   const darkNavBg = primaryColor;
@@ -76,7 +82,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Item leftSection={<IconSettings size={14} />}>Settings</Menu.Item>
-                <Menu.Item leftSection={<IconLogout size={14} />} color="red">Logout</Menu.Item>
+                <Menu.Item 
+                  leftSection={<IconLogout size={14} />} 
+                  color="red" 
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </Group>
@@ -111,6 +123,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <IconClipboardCheck color="white" size={28} />
           <Title order={4} c="white" style={{ fontFamily: 'var(--font-roboto), sans-serif' }}>Approval System</Title>
         </Group>
+
+        <Divider my="md" color="white" opacity={0.2} />
         
         <NavLink
           component={Link}
@@ -136,7 +150,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <NavLink
           component={Link}
           href="/settings"
-          label="Settings (Pages)"
+          label="Settings"
           leftSection={<IconSettings size={18} stroke={1.5} />}
           active={pathname === '/settings'}
           onClick={toggle}

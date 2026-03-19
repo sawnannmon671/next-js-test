@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Roboto, Noto_Sans_Myanmar } from "next/font/google";
 import localFont from "next/font/local";
 
 import "./globals.css";
 import '@mantine/core/styles.css';
 import { ColorSchemeScript } from '@mantine/core';
-import { DashboardShell } from "./components/DashboardShell";
+import { ShellWrapper } from "./components/ShellWrapper";
 import { ThemeProvider } from './context/ThemeContext';
 import { ThemedMantineProvider } from './components/ThemedMantineProvider';
-
-
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,6 +24,12 @@ const roboto = Roboto({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
   variable: '--font-roboto',
+});
+
+const myanmar = Noto_Sans_Myanmar({
+  weight: ['400', '500', '700'],
+  subsets: ['myanmar'],
+  variable: '--font-myanmar',
 });
 
 
@@ -45,12 +49,12 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} ${myanmar.variable}`}>
         <ThemeProvider>
           <ThemedMantineProvider>
-            <DashboardShell>
+            <ShellWrapper>
               {children}
-            </DashboardShell>
+            </ShellWrapper>
           </ThemedMantineProvider>
         </ThemeProvider>
       </body>

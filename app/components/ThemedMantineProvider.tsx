@@ -26,6 +26,10 @@ export function ThemedMantineProvider({ children }: { children: React.ReactNode 
 
     return createTheme({
       primaryColor: 'custom',
+      fontFamily: 'var(--font-myanmar), var(--font-roboto), sans-serif',
+      headings: {
+        fontFamily: 'var(--font-myanmar), var(--font-roboto), sans-serif',
+      },
       colors: {
         custom: customColor,
       },
