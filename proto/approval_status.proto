@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package approval;
+
+option go_package = "go-grpc/api/approval";
+
+service ApprovalStatusService {
+  rpc GetApprovalStatusList (Empty) returns (ApprovalStatusListResponse);
+  rpc CreateApprovalStatus (CreateApprovalStatusRequest) returns (ApprovalStatusResponse);
+  rpc UpdateApprovalStatus (UpdateApprovalStatusRequest) returns (ApprovalStatusResponse);
+  rpc DeleteApprovalStatus (DeleteApprovalStatusRequest) returns (DeleteApprovalStatusResponse);
+}
+
+message Empty {}
+
+message ApprovalStatus {
+  string id = 1;
+  string name = 2;
+  int32 approval_type = 3;
+  bool status = 4;
+  string remark = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message ApprovalStatusListResponse {
+  repeated ApprovalStatus statuses = 1;
+}
+
+message CreateApprovalStatusRequest {
+  string name = 1;
+  int32 approval_type = 2;
+  bool status = 3;
+  string remark = 4;
+}
+
+message UpdateApprovalStatusRequest {
+  string id = 1;
+  string name = 2;
+  int32 approval_type = 3;
+  bool status = 4;
+  string remark = 5;
+}
+
+message DeleteApprovalStatusRequest {
+  string id = 1;
+}
+
+message ApprovalStatusResponse {
+  bool success = 1;
+  string message = 2;
+  ApprovalStatus status = 3;
+}
+
+message DeleteApprovalStatusResponse {
+  bool success = 1;
+  string message = 2;
+}

@@ -3,10 +3,11 @@
 # Generate gRPC code from proto files
 proto:
 	@echo "Generating gRPC code..."
-	mkdir -p api/user
+	mkdir -p api/user api/approval web/proto
 	protoc --proto_path=proto --go_out=api/user --go_opt=paths=source_relative --go-grpc_out=api/user --go-grpc_opt=paths=source_relative proto/user.proto
-	mkdir -p web/proto
+	protoc --proto_path=proto --go_out=api/approval --go_opt=paths=source_relative --go-grpc_out=api/approval --go-grpc_opt=paths=source_relative proto/approval_status.proto
 	cp proto/user.proto web/proto/user.proto
+	cp proto/approval_status.proto web/proto/approval_status.proto
 	@echo "Proto generation complete."
 
 # Run Go server
