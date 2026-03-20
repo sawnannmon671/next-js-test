@@ -160,8 +160,16 @@ export default function ApprovalStatusPage() {
                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">ID: {item.id.substring(0,8)}...</span>
                         </td>
                         <td className="px-10 py-8">
-                          <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm ${item.approval_type === 1 ? 'bg-indigo-50 border-indigo-100 text-indigo-600' : 'bg-amber-50 border-amber-100 text-amber-600'}`}>
-                            {item.approval_type === 1 ? 'Workflow Opt' : 'App Core'}
+                          <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm ${
+                            item.approval_type === 1 ? 'bg-amber-50 border-amber-100 text-amber-600' : 
+                            item.approval_type === 2 ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 
+                            item.approval_type === 3 ? 'bg-gray-50 border-gray-100 text-gray-600' : 
+                            'bg-rose-50 border-rose-100 text-rose-600'
+                          }`}>
+                            {item.approval_type === 1 ? 'Pending' : 
+                             item.approval_type === 2 ? 'Approve' : 
+                             item.approval_type === 3 ? 'Cancel' : 
+                             'Reject'}
                           </span>
                         </td>
                         <td className="px-10 py-8">
@@ -246,8 +254,10 @@ export default function ApprovalStatusPage() {
                     onChange={(e) => setFormData({...formData, approval_type: parseInt(e.target.value)})}
                     className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-[#15aabf] focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all appearance-none font-bold text-gray-800"
                   >
-                    <option value={1}>Workflow Layer</option>
-                    <option value={2}>Application Layer</option>
+                    <option value={1}>Pending</option>
+                    <option value={2}>Approve</option>
+                    <option value={3}>Cancel</option>
+                    <option value={4}>Reject</option>
                   </select>
                 </div>
                 <div className="space-y-3">
