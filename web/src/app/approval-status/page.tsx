@@ -187,12 +187,18 @@ export default function ApprovalStatusPage() {
                         <td className="px-10 py-8">
                           <p className="text-sm text-gray-500 font-medium max-w-[200px] truncate italic leading-relaxed">"{item.remark || "No documentation"}"</p>
                         </td>
-                        <td className="px-10 py-8 text-right opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0">
+                        <td className="px-10 py-8 text-right transition-all duration-300">
                           <div className="flex justify-end gap-2">
-                             <button onClick={() => handleEdit(item)} className="p-3 bg-white border border-gray-100 shadow-sm rounded-xl text-gray-600 hover:text-primary hover:border-primary/20 transition-all">
+                             <button 
+                               onClick={() => handleEdit(item)} 
+                               className="p-3 bg-[#15aabf] text-white shadow-lg shadow-[#15aabf]/20 rounded-xl hover:scale-110 active:scale-90 transition-all border-none"
+                             >
                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                              </button>
-                             <button onClick={() => handleDelete(item.id)} className="p-3 bg-white border border-gray-100 shadow-sm rounded-xl text-gray-600 hover:text-rose-600 hover:border-rose-100 transition-all">
+                             <button 
+                               onClick={() => handleDelete(item.id)} 
+                               className="p-3 bg-rose-500 text-white shadow-lg shadow-rose-500/20 rounded-xl hover:scale-110 active:scale-90 transition-all border-none"
+                             >
                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                              </button>
                           </div>
