@@ -14,7 +14,7 @@ var DB *gorm.DB
 
 func InitDB() {
 	var err error
-	
+
 	// Load environment variables if .env exists
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using system environment variables")
@@ -22,15 +22,25 @@ func InitDB() {
 
 	// Get environment variables or use defaults
 	host := os.Getenv("DB_HOST")
-	if host == "" { host = "localhost" }
+	if host == "" {
+		host = "localhost"
+	}
 	user := os.Getenv("DB_USER")
-	if user == "" { user = "postgres" }
+	if user == "" {
+		user = "postgres"
+	}
 	password := os.Getenv("DB_PASSWORD")
-	if password == "" { password = "password" }
+	if password == "" {
+		password = "root"
+	}
 	dbname := os.Getenv("DB_NAME")
-	if dbname == "" { dbname = "go_grpc_db" }
+	if dbname == "" {
+		dbname = "go-grpc-next-js-test"
+	}
 	port := os.Getenv("DB_PORT")
-	if port == "" { port = "5432" }
+	if port == "" {
+		port = "5432"
+	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
 		host, user, password, dbname, port)
