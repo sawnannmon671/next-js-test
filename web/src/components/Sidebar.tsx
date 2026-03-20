@@ -16,7 +16,7 @@ const Sidebar = () => {
     if (pathname === '/' || pathname === '/application') {
       setIsDashboardOpen(true);
     }
-    if (pathname === '/settings' || pathname === '/approval-status') {
+    if (pathname === '/settings') {
       setIsSettingsOpen(true);
     }
   }, [pathname]);
@@ -26,14 +26,15 @@ const Sidebar = () => {
   // Premium active style with subtle glow and contrast
   const activeStyle = {
     backgroundColor: 'white',
-    color: 'var(--primary-color)',
+    color: '#15aabf',
     boxShadow: '0 8px 16px rgba(0, 0, 0, 0.12)',
     fontWeight: '900',
-    transform: 'scale(1.02)'
+    transform: 'scale(1.02)',
+    textDecoration: 'none'
   };
 
   const navItemClass = (path: string) => 
-    `flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 ${isActive(path) ? 'z-20' : 'text-white/60 hover:text-white hover:bg-white/10'}`;
+    `flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 no-underline ${isActive(path) ? 'z-20 text-[#15aabf]' : 'text-white/60 hover:text-white hover:bg-white/10'}`;
 
   return (
     <aside 
@@ -67,7 +68,7 @@ const Sidebar = () => {
         <div>
           <button 
             onClick={() => setIsDashboardOpen(!isDashboardOpen)}
-            className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all duration-300 ${isDashboardOpen ? 'text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+            className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all duration-300 no-underline ${isDashboardOpen ? 'text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
           >
             <div className="flex items-center gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 8.71V21h-7V16c0-1.1-.9-2-2-2s-2 .9-2 2v5H3V8.71L11 3l8 5.71z"/></svg>
@@ -88,18 +89,10 @@ const Sidebar = () => {
             <div className="mt-1 ml-6 pl-4 border-l-2 border-white/20 space-y-1 animate-in slide-in-from-left-2 duration-300">
               <Link 
                 href="/" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all ${isActive('/') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
                 style={isActive('/') ? activeStyle : {}}
               >
                 Analytics Overview
-              </Link>
-              <Link 
-                href="/application" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all ${isActive('/application') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActive('/application') ? activeStyle : {}}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-                Application
               </Link>
             </div>
           )}
@@ -108,11 +101,25 @@ const Sidebar = () => {
         {/* Separator Line */}
         <div className="w-full h-px bg-white/10 mx-auto my-2 rounded-full opacity-50"></div>
 
+        {/* Application Link */}
+        <div className="pt-2">
+          <Link 
+            href="/application" 
+            className={navItemClass('/application')}
+            style={isActive('/application') ? activeStyle : {}}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M3 15h12"/><path d="m9 9 6 6-6 6"/></svg>
+            <span className="font-semibold text-sm tracking-tight">Application</span>
+          </Link>
+        </div>
+
+        {/* Separator Line */}
+        <div className="w-full h-px bg-white/10 mx-auto my-2 rounded-full opacity-50"></div>
         {/* Settings Group */}
         <div>
           <button 
             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-            className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all duration-300 ${isSettingsOpen ? 'text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+            className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all duration-300 no-underline ${isSettingsOpen ? 'text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
           >
             <div className="flex items-center gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.72l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -133,19 +140,11 @@ const Sidebar = () => {
             <div className="mt-1 ml-6 pl-4 border-l-2 border-white/20 space-y-1 animate-in slide-in-from-left-2 duration-300">
               <Link 
                 href="/settings" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all ${isActive('/settings') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/settings') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
                 style={isActive('/settings') ? activeStyle : {}}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.35-.31 1.55-.56.19-.23.28-.56.19-1a4.99 4.99 0 0 1 4.56-6.69A2.01 2.01 0 0 0 22 11.77V12c0-5.5-4.5-10-10-10z"/></svg>
                 Theme Customization
-              </Link>
-              <Link 
-                href="/approval-status" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all ${isActive('/approval-status') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActive('/approval-status') ? activeStyle : {}}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2H2v10h10V2z"/><path d="M12 12H2v10h10V12z"/><path d="M22 2h-10v10h10V2z"/><path d="M22 12h-10v10h10V12z"/></svg>
-                Approval Status
               </Link>
             </div>
           )}
@@ -158,7 +157,7 @@ const Sidebar = () => {
             style={isActive('/users') ? activeStyle : {}}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span className="font-semibold text-sm tracking-tight text-white">User Management</span>
+            <span className="font-semibold text-sm tracking-tight">User Management</span>
           </Link>
         </div>
       </nav>

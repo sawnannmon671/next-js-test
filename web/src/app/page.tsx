@@ -9,7 +9,7 @@ export default async function Home() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 no-underline">Dashboard</h1>
         <div className="flex gap-3">
           <button className="bg-white px-4 py-2 rounded-xl text-gray-500 font-medium border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">Export Report</button>
           <button className="bg-primary px-4 py-2 rounded-xl text-white font-medium shadow-lg shadow-primary-shadow hover:bg-primary-hover transition-all">New Application</button>
