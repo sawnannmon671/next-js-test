@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"go-grpc-next-js-test/api/user"
 	"go-grpc-next-js-test/app/models"
@@ -29,7 +31,7 @@ func (s *UserServer) GetUserList(ctx context.Context, req *user.Empty) (*user.Us
 		pbUsers = append(pbUsers, &user.User{
 			Id:            u.ID.String(),
 			Email:         u.Email,
-			UserType:      int32(u.UserType),
+			UserType:      fmt.Sprintf("%d", u.UserType),
 			EmployeeId:    u.EmployeeID,
 			CompanyName:   u.CompanyName,
 			ContactNumber: u.ContactNumber,
@@ -61,7 +63,7 @@ func (s *UserServer) GetUser(ctx context.Context, req *user.GetUserRequest) (*us
 		User: &user.User{
 			Id:            u.ID.String(),
 			Email:         u.Email,
-			UserType:      int32(u.UserType),
+			UserType:      fmt.Sprintf("%d", u.UserType),
 			EmployeeId:    u.EmployeeID,
 			CompanyName:   u.CompanyName,
 			ContactNumber: u.ContactNumber,
@@ -75,11 +77,12 @@ func (s *UserServer) GetUser(ctx context.Context, req *user.GetUserRequest) (*us
 
 // User Create
 func (s *UserServer) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.UserResponse, error) {
+	userType, _ := strconv.Atoi(req.UserType)
 	newUser := &models.User{
 		ID:            uuid.New(),
 		Email:         req.Email,
-		PasswordHash:  "hashed_password", // Placeholder for actual hashing
-		UserType:      int(req.UserType),
+		PasswordHash:  "hashed_password", 
+		UserType:      userType,
 		EmployeeID:    req.EmployeeId,
 		CompanyName:   req.CompanyName,
 		ContactNumber: req.ContactNumber,
@@ -96,18 +99,75 @@ func (s *UserServer) CreateUser(ctx context.Context, req *user.CreateUserRequest
 	return &user.UserResponse{
 		Success: true,
 		Message: "User created",
-		User: &user.User{Id: newUser.ID.String(), Email: newUser.Email},
+		User: &user.User{
+			Id:            newUser.ID.String(),
+			Email:         newUser.Email,
+			UserType:      fmt.Sprintf("%d", newUser.UserType),
+			EmployeeId:    newUser.EmployeeID,
+			CompanyName:   newUser.CompanyName,
+			ContactNumber: newUser.ContactNumber,
+			Address:       newUser.Address,
+			Status:        newUser.Status,
+			Remark:        newUser.Remark,
+		},
 	}, nil
 }
 
 // User Update
 func (s *UserServer) UpdateUser(ctx context.Context, req *user.UpdateUserRequest) (*user.UserResponse, error) {
-	return &user.UserResponse{Success: false, Message: "Not implemented yet"}, nil
+	id, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	userType, _ := strconv.Atoi(req.UserType)
+	updateUser := &models.User{
+		ID:            id,
+		Email:         req.Email,
+		UserType:      userType,
+		EmployeeID:    req.EmployeeId,
+		CompanyName:   req.CompanyName,
+		ContactNumber: req.ContactNumber,
+		Address:       req.Address,
+		Status:        req.Status,
+		Remark:        req.Remark,
+	}
+
+	_, err = database.BunDB.NewUpdate().Model(updateUser).Where("id = ?", id).Exec(ctx)
+	if err != nil {
+		return &user.UserResponse{Success: false, Message: err.Error()}, nil
+	}
+
+	return &user.UserResponse{
+		Success: true,
+		Message: "User updated",
+		User: &user.User{
+			Id:            id.String(),
+			Email:         req.Email,
+			UserType:      req.UserType,
+			EmployeeId:    req.EmployeeId,
+			CompanyName:   req.CompanyName,
+			ContactNumber: req.ContactNumber,
+			Address:       req.Address,
+			Status:        req.Status,
+			Remark:        req.Remark,
+		},
+	}, nil
 }
 
 // User Delete
 func (s *UserServer) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (*user.DeleteResponse, error) {
-	return &user.DeleteResponse{Success: false, Message: "Not implemented yet"}, nil
+	id, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = database.BunDB.NewDelete().Model((*models.User)(nil)).Where("id = ?", id).Exec(ctx)
+	if err != nil {
+		return &user.DeleteResponse{Success: false, Message: err.Error()}, nil
+	}
+
+	return &user.DeleteResponse{Success: true, Message: "User deleted"}, nil
 }
 
 // Role List

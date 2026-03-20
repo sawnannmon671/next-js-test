@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.5
-// source: approval_status.proto
+// source: proto/approval_status.proto
 
 package approval
 
@@ -231,5 +231,5 @@ var ApprovalStatusService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "approval_status.proto",
+	Metadata: "proto/approval_status.proto",
 }

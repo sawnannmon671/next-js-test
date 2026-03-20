@@ -12,7 +12,10 @@ import (
 func MigrateRBAC(db *bun.DB) {
 	ctx := context.Background()
 
-	models := []interface{}{
+	// Register models for relations
+	db.RegisterModel((*models.UserRole)(nil), (*models.RolePermission)(nil))
+
+	modelsToCreate := []interface{}{
 		(*models.User)(nil),
 		(*models.Role)(nil),
 		(*models.Permission)(nil),
@@ -20,7 +23,7 @@ func MigrateRBAC(db *bun.DB) {
 		(*models.RolePermission)(nil),
 	}
 
-	for _, model := range models {
+	for _, model := range modelsToCreate {
 		_, err := db.NewCreateTable().
 			Model(model).
 			IfNotExists().

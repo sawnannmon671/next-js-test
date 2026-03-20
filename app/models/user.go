@@ -40,5 +40,8 @@ type UserRole struct {
 
 	ID     uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"id"`
 	UserID uuid.UUID `bun:"user_id,type:uuid,notnull" json:"user_id"`
+	User   *User     `bun:"rel:belongs-to,join:user_id=id"`
+	
 	RoleID uuid.UUID `bun:"role_id,type:uuid,notnull" json:"role_id"`
+	Role   *Role     `bun:"rel:belongs-to,join:role_id=id"`
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.5
-// source: approval_status.proto
+// source: proto/approval_status.proto
 
 package approval
 
@@ -29,7 +29,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_approval_status_proto_msgTypes[0]
+	mi := &file_proto_approval_status_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +41,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[0]
+	mi := &file_proto_approval_status_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,7 +54,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{0}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{0}
 }
 
 type ApprovalStatus struct {
@@ -72,7 +72,7 @@ type ApprovalStatus struct {
 
 func (x *ApprovalStatus) Reset() {
 	*x = ApprovalStatus{}
-	mi := &file_approval_status_proto_msgTypes[1]
+	mi := &file_proto_approval_status_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -84,7 +84,7 @@ func (x *ApprovalStatus) String() string {
 func (*ApprovalStatus) ProtoMessage() {}
 
 func (x *ApprovalStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[1]
+	mi := &file_proto_approval_status_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -97,7 +97,7 @@ func (x *ApprovalStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovalStatus.ProtoReflect.Descriptor instead.
 func (*ApprovalStatus) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{1}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ApprovalStatus) GetId() string {
@@ -158,7 +158,7 @@ type ApprovalStatusListResponse struct {
 
 func (x *ApprovalStatusListResponse) Reset() {
 	*x = ApprovalStatusListResponse{}
-	mi := &file_approval_status_proto_msgTypes[2]
+	mi := &file_proto_approval_status_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -170,7 +170,7 @@ func (x *ApprovalStatusListResponse) String() string {
 func (*ApprovalStatusListResponse) ProtoMessage() {}
 
 func (x *ApprovalStatusListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[2]
+	mi := &file_proto_approval_status_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -183,7 +183,7 @@ func (x *ApprovalStatusListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovalStatusListResponse.ProtoReflect.Descriptor instead.
 func (*ApprovalStatusListResponse) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{2}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ApprovalStatusListResponse) GetStatuses() []*ApprovalStatus {
@@ -205,7 +205,7 @@ type CreateApprovalStatusRequest struct {
 
 func (x *CreateApprovalStatusRequest) Reset() {
 	*x = CreateApprovalStatusRequest{}
-	mi := &file_approval_status_proto_msgTypes[3]
+	mi := &file_proto_approval_status_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -217,7 +217,7 @@ func (x *CreateApprovalStatusRequest) String() string {
 func (*CreateApprovalStatusRequest) ProtoMessage() {}
 
 func (x *CreateApprovalStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[3]
+	mi := &file_proto_approval_status_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -230,7 +230,7 @@ func (x *CreateApprovalStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateApprovalStatusRequest.ProtoReflect.Descriptor instead.
 func (*CreateApprovalStatusRequest) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{3}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateApprovalStatusRequest) GetName() string {
@@ -274,7 +274,7 @@ type UpdateApprovalStatusRequest struct {
 
 func (x *UpdateApprovalStatusRequest) Reset() {
 	*x = UpdateApprovalStatusRequest{}
-	mi := &file_approval_status_proto_msgTypes[4]
+	mi := &file_proto_approval_status_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -286,7 +286,7 @@ func (x *UpdateApprovalStatusRequest) String() string {
 func (*UpdateApprovalStatusRequest) ProtoMessage() {}
 
 func (x *UpdateApprovalStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[4]
+	mi := &file_proto_approval_status_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -299,7 +299,7 @@ func (x *UpdateApprovalStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateApprovalStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateApprovalStatusRequest) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{4}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateApprovalStatusRequest) GetId() string {
@@ -346,7 +346,7 @@ type DeleteApprovalStatusRequest struct {
 
 func (x *DeleteApprovalStatusRequest) Reset() {
 	*x = DeleteApprovalStatusRequest{}
-	mi := &file_approval_status_proto_msgTypes[5]
+	mi := &file_proto_approval_status_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -358,7 +358,7 @@ func (x *DeleteApprovalStatusRequest) String() string {
 func (*DeleteApprovalStatusRequest) ProtoMessage() {}
 
 func (x *DeleteApprovalStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[5]
+	mi := &file_proto_approval_status_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -371,7 +371,7 @@ func (x *DeleteApprovalStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteApprovalStatusRequest.ProtoReflect.Descriptor instead.
 func (*DeleteApprovalStatusRequest) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{5}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DeleteApprovalStatusRequest) GetId() string {
@@ -392,7 +392,7 @@ type ApprovalStatusResponse struct {
 
 func (x *ApprovalStatusResponse) Reset() {
 	*x = ApprovalStatusResponse{}
-	mi := &file_approval_status_proto_msgTypes[6]
+	mi := &file_proto_approval_status_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -404,7 +404,7 @@ func (x *ApprovalStatusResponse) String() string {
 func (*ApprovalStatusResponse) ProtoMessage() {}
 
 func (x *ApprovalStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[6]
+	mi := &file_proto_approval_status_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -417,7 +417,7 @@ func (x *ApprovalStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovalStatusResponse.ProtoReflect.Descriptor instead.
 func (*ApprovalStatusResponse) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{6}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ApprovalStatusResponse) GetSuccess() bool {
@@ -451,7 +451,7 @@ type DeleteApprovalStatusResponse struct {
 
 func (x *DeleteApprovalStatusResponse) Reset() {
 	*x = DeleteApprovalStatusResponse{}
-	mi := &file_approval_status_proto_msgTypes[7]
+	mi := &file_proto_approval_status_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -463,7 +463,7 @@ func (x *DeleteApprovalStatusResponse) String() string {
 func (*DeleteApprovalStatusResponse) ProtoMessage() {}
 
 func (x *DeleteApprovalStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_approval_status_proto_msgTypes[7]
+	mi := &file_proto_approval_status_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -476,7 +476,7 @@ func (x *DeleteApprovalStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteApprovalStatusResponse.ProtoReflect.Descriptor instead.
 func (*DeleteApprovalStatusResponse) Descriptor() ([]byte, []int) {
-	return file_approval_status_proto_rawDescGZIP(), []int{7}
+	return file_proto_approval_status_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteApprovalStatusResponse) GetSuccess() bool {
@@ -493,11 +493,11 @@ func (x *DeleteApprovalStatusResponse) GetMessage() string {
 	return ""
 }
 
-var File_approval_status_proto protoreflect.FileDescriptor
+var File_proto_approval_status_proto protoreflect.FileDescriptor
 
-const file_approval_status_proto_rawDesc = "" +
+const file_proto_approval_status_proto_rawDesc = "" +
 	"\n" +
-	"\x15approval_status.proto\x12\bapproval\"\a\n" +
+	"\x1bproto/approval_status.proto\x12\bapproval\"\a\n" +
 	"\x05Empty\"\xc7\x01\n" +
 	"\x0eApprovalStatus\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
@@ -538,19 +538,19 @@ const file_approval_status_proto_rawDesc = "" +
 	"\x14DeleteApprovalStatus\x12%.approval.DeleteApprovalStatusRequest\x1a&.approval.DeleteApprovalStatusResponseB#Z!go-grpc-next-js-test/api/approvalb\x06proto3"
 
 var (
-	file_approval_status_proto_rawDescOnce sync.Once
-	file_approval_status_proto_rawDescData []byte
+	file_proto_approval_status_proto_rawDescOnce sync.Once
+	file_proto_approval_status_proto_rawDescData []byte
 )
 
-func file_approval_status_proto_rawDescGZIP() []byte {
-	file_approval_status_proto_rawDescOnce.Do(func() {
-		file_approval_status_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_approval_status_proto_rawDesc), len(file_approval_status_proto_rawDesc)))
+func file_proto_approval_status_proto_rawDescGZIP() []byte {
+	file_proto_approval_status_proto_rawDescOnce.Do(func() {
+		file_proto_approval_status_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_approval_status_proto_rawDesc), len(file_proto_approval_status_proto_rawDesc)))
 	})
-	return file_approval_status_proto_rawDescData
+	return file_proto_approval_status_proto_rawDescData
 }
 
-var file_approval_status_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_approval_status_proto_goTypes = []any{
+var file_proto_approval_status_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_approval_status_proto_goTypes = []any{
 	(*Empty)(nil),                        // 0: approval.Empty
 	(*ApprovalStatus)(nil),               // 1: approval.ApprovalStatus
 	(*ApprovalStatusListResponse)(nil),   // 2: approval.ApprovalStatusListResponse
@@ -560,7 +560,7 @@ var file_approval_status_proto_goTypes = []any{
 	(*ApprovalStatusResponse)(nil),       // 6: approval.ApprovalStatusResponse
 	(*DeleteApprovalStatusResponse)(nil), // 7: approval.DeleteApprovalStatusResponse
 }
-var file_approval_status_proto_depIdxs = []int32{
+var file_proto_approval_status_proto_depIdxs = []int32{
 	1, // 0: approval.ApprovalStatusListResponse.statuses:type_name -> approval.ApprovalStatus
 	1, // 1: approval.ApprovalStatusResponse.status:type_name -> approval.ApprovalStatus
 	0, // 2: approval.ApprovalStatusService.GetApprovalStatusList:input_type -> approval.Empty
@@ -578,26 +578,26 @@ var file_approval_status_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_approval_status_proto_init() }
-func file_approval_status_proto_init() {
-	if File_approval_status_proto != nil {
+func init() { file_proto_approval_status_proto_init() }
+func file_proto_approval_status_proto_init() {
+	if File_proto_approval_status_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_approval_status_proto_rawDesc), len(file_approval_status_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_approval_status_proto_rawDesc), len(file_proto_approval_status_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_approval_status_proto_goTypes,
-		DependencyIndexes: file_approval_status_proto_depIdxs,
-		MessageInfos:      file_approval_status_proto_msgTypes,
+		GoTypes:           file_proto_approval_status_proto_goTypes,
+		DependencyIndexes: file_proto_approval_status_proto_depIdxs,
+		MessageInfos:      file_proto_approval_status_proto_msgTypes,
 	}.Build()
-	File_approval_status_proto = out.File
-	file_approval_status_proto_goTypes = nil
-	file_approval_status_proto_depIdxs = nil
+	File_proto_approval_status_proto = out.File
+	file_proto_approval_status_proto_goTypes = nil
+	file_proto_approval_status_proto_depIdxs = nil
 }

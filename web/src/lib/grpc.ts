@@ -2,8 +2,8 @@ import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import path from 'path';
 
-const USER_PROTO_PATH = path.join(process.cwd(), 'proto/user.proto');
-const APPROVAL_PROTO_PATH = path.join(process.cwd(), 'proto/approval_status.proto');
+const USER_PROTO_PATH = path.resolve(process.cwd(), 'proto/user.proto');
+const APPROVAL_PROTO_PATH = path.resolve(process.cwd(), 'proto/approval_status.proto');
 
 const loaderOptions = {
   keepCase: true,
