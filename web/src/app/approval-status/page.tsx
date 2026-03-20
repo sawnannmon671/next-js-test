@@ -110,7 +110,7 @@ export default function ApprovalStatusPage() {
                    setFormData({ name: "", approval_type: 1, status: true, remark: "" });
                    setIsModalOpen(true);
                 }}
-                className="group relative bg-[#1E293B] text-white px-8 py-4 rounded-[1.5rem] font-bold shadow-2xl shadow-slate-200 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 overflow-hidden"
+                className="group relative bg-[#15aabf] text-white px-8 py-4 rounded-[1.5rem] font-bold shadow-2xl shadow-[#15aabf]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3 overflow-hidden"
               >
                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 <div className="p-2 bg-white/10 rounded-lg">
@@ -144,9 +144,11 @@ export default function ApprovalStatusPage() {
                   <thead>
                     <tr className="bg-gray-50/50 border-b border-gray-100">
                       <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Name</th>
-                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Classification</th>
-                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Live Status</th>
-                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Internal Remark</th>
+                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Approval Type</th>
+                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
+                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Created At</th>
+                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Updated At</th>
+                      <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Remark</th>
                       <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Settings</th>
                     </tr>
                   </thead>
@@ -167,6 +169,12 @@ export default function ApprovalStatusPage() {
                             <div className={`h-2.5 w-2.5 rounded-full ring-4 ${item.status ? 'bg-emerald-500 ring-emerald-50' : 'bg-rose-500 ring-rose-50'}`}></div>
                             <span className="text-sm font-bold text-gray-700">{item.status ? 'Operational' : 'Disabled'}</span>
                           </div>
+                        </td>
+                        <td className="px-10 py-8">
+                          <span className="text-[11px] font-bold text-gray-500">{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</span>
+                        </td>
+                        <td className="px-10 py-8">
+                          <span className="text-[11px] font-bold text-gray-500">{item.updated_at ? new Date(item.updated_at).toLocaleDateString() : 'N/A'}</span>
                         </td>
                         <td className="px-10 py-8">
                           <p className="text-sm text-gray-500 font-medium max-w-[200px] truncate italic leading-relaxed">"{item.remark || "No documentation"}"</p>
@@ -202,8 +210,8 @@ export default function ApprovalStatusPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="bg-white rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.3)] w-full max-w-xl overflow-hidden animate-in zoom-in-95 duration-200 border border-white/20">
-            <div className="bg-[#1E293B] px-10 py-10 text-white relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full blur-[100px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+            <div className="bg-[#15aabf] px-10 py-10 text-white relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-[100px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
                <div className="relative z-10 flex justify-between items-center">
                  <div>
                     <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-50 mb-1 block">Maintenance Portal</span>
@@ -217,13 +225,13 @@ export default function ApprovalStatusPage() {
             
             <form onSubmit={handleSubmit} className="p-10 space-y-8 bg-white">
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Label Designation</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Name</label>
                 <div className="relative group">
                   <input 
                     type="text" 
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-primary focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all font-bold text-gray-800"
+                    className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-[#15aabf] focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all font-bold text-gray-800"
                     placeholder="Enter status name..."
                     required
                   />
@@ -232,18 +240,18 @@ export default function ApprovalStatusPage() {
 
               <div className="grid grid-cols-2 gap-8 mt-2">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Mapping Layer</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Approval Type</label>
                   <select 
                     value={formData.approval_type}
                     onChange={(e) => setFormData({...formData, approval_type: parseInt(e.target.value)})}
-                    className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-primary focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all appearance-none font-bold text-gray-800"
+                    className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-[#15aabf] focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all appearance-none font-bold text-gray-800"
                   >
                     <option value={1}>Workflow Layer</option>
                     <option value={2}>Application Layer</option>
                   </select>
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Functional Mode</label>
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Status</label>
                   <div className="flex items-center h-[54px]">
                     <div 
                       onClick={() => setFormData({...formData, status: !formData.status})}
@@ -257,17 +265,17 @@ export default function ApprovalStatusPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Detailed Synopsis</label>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Remark</label>
                 <textarea 
                   value={formData.remark}
                   onChange={(e) => setFormData({...formData, remark: e.target.value})}
-                  className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-primary focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all min-h-[120px] font-medium text-gray-600 leading-relaxed"
+                  className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] focus:border-[#15aabf] focus:bg-white rounded-2xl px-6 py-4.5 outline-none transition-all min-h-[120px] font-medium text-gray-600 leading-relaxed"
                   placeholder="Describe this stage or internal purpose..."
                 ></textarea>
               </div>
 
               <div className="pt-4">
-                <button type="submit" className="w-full bg-slate-900 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                <button type="submit" className="w-full bg-[#15aabf] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-[#15aabf]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
                   <span>Commit Configuration</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>

@@ -16,7 +16,7 @@ const Sidebar = () => {
     if (pathname === '/' || pathname === '/application') {
       setIsDashboardOpen(true);
     }
-    if (pathname === '/settings') {
+    if (pathname === '/settings' || pathname === '/approval-status') {
       setIsSettingsOpen(true);
     }
   }, [pathname]);
@@ -138,6 +138,14 @@ const Sidebar = () => {
 
           {isSettingsOpen && (
             <div className="mt-1 ml-6 pl-4 border-l-2 border-white/20 space-y-1 animate-in slide-in-from-left-2 duration-300">
+              <Link 
+                href="/approval-status" 
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/approval-status') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                style={isActive('/approval-status') ? activeStyle : {}}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2H2v10h10V2z"/><path d="M12 12H2v10h10V12z"/><path d="M22 2h-10v10h10V2z"/><path d="M22 12h-10v10h10V12z"/></svg>
+                Approval Status
+              </Link>
               <Link 
                 href="/settings" 
                 className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/settings') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}

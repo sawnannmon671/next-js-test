@@ -100,7 +100,7 @@ export default function ApplicationStatusPage() {
                   <div className="w-1 h-1 rounded-full bg-gray-300"></div>
                   <span>System</span>
                 </div>
-                <h1 className="text-4xl font-black text-gray-900 tracking-tight no-underline">Approval Status</h1>
+                <h1 className="text-4xl font-black text-gray-900 tracking-tight no-underline">Application Management</h1>
                 <p className="text-gray-500 font-medium pb-1">Efficiently manage and organize your approval states and workflow stages.</p>
               </div>
 
