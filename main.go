@@ -6,17 +6,20 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	"go-grpc/api/approval"
-	"go-grpc/api/user"
-	"go-grpc/app/service"
-	"go-grpc/database"
-	"go-grpc/database/seeder"
+	"go-grpc-next-js-test/api/approval"
+	"go-grpc-next-js-test/api/user"
+	"go-grpc-next-js-test/app/service"
+	"go-grpc-next-js-test/database"
+	"go-grpc-next-js-test/database/seeder"
+	"go-grpc-next-js-test/database/migration"
 )
 
 func main() {
-	// Initialize Database (GORM & Bun)
 	database.InitDB()
 	database.InitBunDB()
+
+	// Run Migrations
+	migration.MigrateRBAC(database.BunDB)
 
 	// Seed Initial Data
 	seeder.SeedApprovalStatus()
@@ -29,6 +32,8 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	user.RegisterUserServiceServer(grpcServer, &service.UserServer{})
+	user.RegisterRoleServiceServer(grpcServer, &service.UserServer{})
+	user.RegisterPermissionServiceServer(grpcServer, &service.UserServer{})
 	approval.RegisterApprovalStatusServiceServer(grpcServer, &service.ApprovalStatusServer{})
 
 	fmt.Println("gRPC Server listening on port 50051")

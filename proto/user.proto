@@ -2,29 +2,143 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "go-grpc/api/user";
+option go_package = "go-grpc-next-js-test/api/user";
 
 service UserService {
-  rpc GetUser (GetUserRequest) returns (GetUserResponse);
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUser (GetUserRequest) returns (UserResponse);
+  rpc CreateUser (CreateUserRequest) returns (UserResponse);
+  rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteResponse);
+  rpc GetUserList (Empty) returns (UserListResponse);
+}
+
+service RoleService {
+  rpc GetRoleList (Empty) returns (RoleListResponse);
+  rpc CreateRole (CreateRoleRequest) returns (RoleResponse);
+  rpc UpdateRole (UpdateRoleRequest) returns (RoleResponse);
+  rpc DeleteRole (DeleteRoleRequest) returns (DeleteResponse);
+}
+
+service PermissionService {
+  rpc GetPermissionList (Empty) returns (PermissionListResponse);
+  rpc CreatePermission (CreatePermissionRequest) returns (PermissionResponse);
+}
+
+message Empty {}
+
+message User {
+  string id = 1;
+  string email = 2;
+  int32 user_type = 3;
+  string employee_id = 4;
+  string company_name = 5;
+  string contact_number = 6;
+  string address = 7;
+  bool status = 8;
+  string remark = 9;
+  string created_at = 10;
+}
+
+message Role {
+  string id = 1;
+  string name = 2;
+  bool status = 3;
+  string remark = 4;
+  string created_at = 5;
+}
+
+message Permission {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+  string created_at = 4;
+}
+
+message UserResponse {
+  bool success = 1;
+  string message = 2;
+  User user = 3;
+}
+
+message UserListResponse {
+  repeated User users = 1;
 }
 
 message GetUserRequest {
   string id = 1;
 }
 
-message GetUserResponse {
+message CreateUserRequest {
+  string email = 1;
+  string password = 2;
+  int32 user_type = 3;
+  string employee_id = 4;
+  string company_name = 5;
+  string contact_number = 6;
+  string address = 7;
+  bool status = 8;
+  string remark = 9;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  string email = 2;
+  int32 user_type = 3;
+  string employee_id = 4;
+  string company_name = 5;
+  string contact_number = 6;
+  string address = 7;
+  bool status = 8;
+  string remark = 9;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message RoleResponse {
+  bool success = 1;
+  string message = 2;
+  Role role = 3;
+}
+
+message RoleListResponse {
+  repeated Role roles = 1;
+}
+
+message CreateRoleRequest {
+  string name = 1;
+  bool status = 2;
+  string remark = 3;
+}
+
+message UpdateRoleRequest {
   string id = 1;
   string name = 2;
-  string email = 3;
+  bool status = 3;
+  string remark = 4;
 }
 
-message CreateUserRequest {
-  string name = 1;
-  string email = 2;
-}
-
-message CreateUserResponse {
+message DeleteRoleRequest {
   string id = 1;
-  bool success = 2;
+}
+
+message PermissionResponse {
+  bool success = 1;
+  string message = 2;
+  Permission permission = 3;
+}
+
+message PermissionListResponse {
+  repeated Permission permissions = 1;
+}
+
+message CreatePermissionRequest {
+  string name = 1;
+  string code = 2;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
 }

@@ -1,0 +1,27 @@
+# ARCHITECTURE: GO BACKEND & NEXT.JS WEB COMMUNICATION
+
+## 1. SHARED DATABASE (PostgreSQL)
+- **Primary Connection**: The **GO BACKEND** is the ONLY component that talks directly to the database.
+- **Why?**: This ensures data integrity and security (backend-to-backend communication).
+- **Settings**: Correctly configured with `host=localhost`, `user=postgres`, `password=root`, `dbname=go-grpc-next-js-test`.
+
+## 2. API ARCHITECTURE (gRPC)
+- **Protocol**: Your API is **gRPC (HTTP/2)**.
+- **Port**: `localhost:50051`.
+- **Bridge**: Next.js (Server Components/Actions) acts as a client that connects to the Go gRPC port.
+- **Schema**: Shared via your `.proto` file (`proto/approval_status.proto`).
+
+## 3. COMPONENT COMMUNICATION MAP
+| Step | Action | Direction | Port |
+| :--- | :--- | :--- | :--- |
+| **USER** | Interacts with UI | Browser → Web | 3000 |
+| **WEB API** | Server Action calls gRPC | Next.js → Go Server | 50051 |
+| **DB CALL** | SQL operation | Go Server → Database | 5432 |
+| **REPLY** | Data flows back | DB → Go → Next.js → UI | - |
+
+## 4. ESSENTIAL CONFIG (PERIOD)
+- **GO .env**: All DB credentials + gRPC Port.
+- **WEB .env.local**: `GRPC_SERVER_URL=localhost:50051`.
+
+### SYSTEM SUMMARY:
+Your data is stored in **PostgreSQL**. **Go** manages it. **Next.js** presents it. **gRPC** links them together.

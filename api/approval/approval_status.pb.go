@@ -535,7 +535,7 @@ const file_approval_status_proto_rawDesc = "" +
 	"\x15GetApprovalStatusList\x12\x0f.approval.Empty\x1a$.approval.ApprovalStatusListResponse\x12_\n" +
 	"\x14CreateApprovalStatus\x12%.approval.CreateApprovalStatusRequest\x1a .approval.ApprovalStatusResponse\x12_\n" +
 	"\x14UpdateApprovalStatus\x12%.approval.UpdateApprovalStatusRequest\x1a .approval.ApprovalStatusResponse\x12e\n" +
-	"\x14DeleteApprovalStatus\x12%.approval.DeleteApprovalStatusRequest\x1a&.approval.DeleteApprovalStatusResponseB\x16Z\x14go-grpc/api/approvalb\x06proto3"
+	"\x14DeleteApprovalStatus\x12%.approval.DeleteApprovalStatusRequest\x1a&.approval.DeleteApprovalStatusResponseB#Z!go-grpc-next-js-test/api/approvalb\x06proto3"
 
 var (
 	file_approval_status_proto_rawDescOnce sync.Once

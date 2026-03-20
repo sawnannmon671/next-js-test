@@ -139,7 +139,7 @@ export default function ApprovalStatusPage() {
                 <span className="text-[10px] font-black uppercase tracking-widest">Retrieving Data...</span>
               </div>
             ) : (
-              <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden translate-y-0 transition-all">
+              <div className="bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden translate-y-0 transition-all">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-gray-50/50 border-b border-gray-100">

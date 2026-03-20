@@ -19,19 +19,86 @@ const approvalDefinition = protoLoader.loadSync(APPROVAL_PROTO_PATH, loaderOptio
 const userProto = grpc.loadPackageDefinition(userDefinition) as any;
 const approvalProto = grpc.loadPackageDefinition(approvalDefinition) as any;
 
-export const userClient = new userProto.user.UserService(
-  'localhost:50051',
-  grpc.credentials.createInsecure()
-);
+// Defensive initialization to prevent crashes if proto structure changes
+const userPkg = userProto?.user || {};
+const approvalPkg = approvalProto?.approval || {};
 
-export const approvalClient = new approvalProto.approval.ApprovalStatusService(
-  'localhost:50051',
+export const userClient = userPkg.UserService ? new userPkg.UserService(
+  process.env.GRPC_SERVER_URL || 'localhost:50051',
   grpc.credentials.createInsecure()
-);
+) : null;
 
-export const getUser = (id: string): Promise<any> => {
+export const roleClient = userPkg.RoleService ? new userPkg.RoleService(
+  process.env.GRPC_SERVER_URL || 'localhost:50051',
+  grpc.credentials.createInsecure()
+) : null;
+
+export const permissionClient = userPkg.PermissionService ? new userPkg.PermissionService(
+  process.env.GRPC_SERVER_URL || 'localhost:50051',
+  grpc.credentials.createInsecure()
+) : null;
+
+export const approvalClient = approvalPkg.ApprovalStatusService ? new approvalPkg.ApprovalStatusService(
+  process.env.GRPC_SERVER_URL || 'localhost:50051',
+  grpc.credentials.createInsecure()
+) : null;
+
+export const getUsers = (): Promise<any> => {
   return new Promise((resolve, reject) => {
-    userClient.GetUser({ id }, (err: any, response: any) => {
+    if (!userClient) return reject(new Error("User service not found in proto"));
+    userClient.GetUserList({}, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response.users || []);
+    });
+  });
+};
+
+export const createUser = (data: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!userClient) return reject(new Error("User service not found in proto"));
+    userClient.CreateUser(data, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
+};
+
+// Roles
+export const getRoles = (): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!roleClient) return reject(new Error("Role service not found in proto"));
+    roleClient.GetRoleList({}, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response.roles || []);
+    });
+  });
+};
+
+export const createRole = (data: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!roleClient) return reject(new Error("Role service not found in proto"));
+    roleClient.CreateRole(data, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
+};
+
+// Permissions
+export const getPermissions = (): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!permissionClient) return reject(new Error("Permission service not found in proto"));
+    permissionClient.GetPermissionList({}, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response.permissions || []);
+    });
+  });
+};
+
+export const createPermission = (data: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!permissionClient) return reject(new Error("Permission service not found in proto"));
+    permissionClient.CreatePermission(data, (err: any, response: any) => {
       if (err) reject(err);
       else resolve(response);
     });
@@ -40,15 +107,17 @@ export const getUser = (id: string): Promise<any> => {
 
 export const getApprovalStatuses = (): Promise<any> => {
   return new Promise((resolve, reject) => {
+    if (!approvalClient) return reject(new Error("Approval service not found in proto"));
     approvalClient.GetApprovalStatusList({}, (err: any, response: any) => {
       if (err) reject(err);
-      else resolve(response.statuses);
+      else resolve(response.statuses || []);
     });
   });
 };
 
 export const createApprovalStatus = (data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
+    if (!approvalClient) return reject(new Error("Approval service not found in proto"));
     approvalClient.CreateApprovalStatus(data, (err: any, response: any) => {
       if (err) reject(err);
       else resolve(response);
@@ -58,6 +127,7 @@ export const createApprovalStatus = (data: any): Promise<any> => {
 
 export const updateApprovalStatus = (data: any): Promise<any> => {
   return new Promise((resolve, reject) => {
+    if (!approvalClient) return reject(new Error("Approval service not found in proto"));
     approvalClient.UpdateApprovalStatus(data, (err: any, response: any) => {
       if (err) reject(err);
       else resolve(response);
@@ -67,6 +137,7 @@ export const updateApprovalStatus = (data: any): Promise<any> => {
 
 export const deleteApprovalStatus = (id: string): Promise<any> => {
   return new Promise((resolve, reject) => {
+    if (!approvalClient) return reject(new Error("Approval service not found in proto"));
     approvalClient.DeleteApprovalStatus({ id }, (err: any, response: any) => {
       if (err) reject(err);
       else resolve(response);

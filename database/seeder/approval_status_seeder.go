@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"go-grpc/app/models"
-	"go-grpc/database"
+	"go-grpc-next-js-test/app/models"
+	"go-grpc-next-js-test/database"
 )
 
 func SeedApprovalStatus() {

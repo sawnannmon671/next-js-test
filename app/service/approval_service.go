@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"go-grpc/api/approval"
-	"go-grpc/app/models"
-	"go-grpc/database"
+	"go-grpc-next-js-test/api/approval"
+	"go-grpc-next-js-test/app/models"
+	"go-grpc-next-js-test/database"
 
 	"github.com/google/uuid"
 )

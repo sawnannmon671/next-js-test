@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package approval;
 
-option go_package = "go-grpc/api/approval";
+option go_package = "go-grpc-next-js-test/api/approval";
 
 service ApprovalStatusService {
   rpc GetApprovalStatusList (Empty) returns (ApprovalStatusListResponse);

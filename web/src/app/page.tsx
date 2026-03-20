@@ -1,9 +1,9 @@
-import { fetchUserAction } from "@/lib/actions";
+import { fetchUsersAction } from "@/lib/actions";
 import Link from "next/link";
 
 export default async function Home() {
-  const response = await fetchUserAction("1");
-  const userData = response.success ? response.data : null;
+  const response = await fetchUsersAction();
+  const userData = response.success && response.data && response.data.length > 0 ? response.data[0] : null;
   const error = response.success ? null : response.error;
 
   return (
@@ -40,7 +40,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">Recent Users (via gRPC)</h2>
           <span className="bg-primary-light text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">PostgreSQL Backend</span>
@@ -67,7 +67,7 @@ export default async function Home() {
                 <tbody className="text-gray-600 font-medium">
                   <tr className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                     <td className="py-4 font-mono text-xs">{userData.id}</td>
-                    <td className="py-4 text-gray-900">{userData.name}</td>
+                    <td className="py-4 text-gray-900">{userData.email.split('@')[0]}</td>
                     <td className="py-4">{userData.email}</td>
                     <td className="py-4">
                       <span className="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Active</span>

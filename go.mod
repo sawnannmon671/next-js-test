@@ -1,4 +1,4 @@
-module go-grpc
+module go-grpc-next-js-test
 
 go 1.25.5
 
