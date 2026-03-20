@@ -10,6 +10,7 @@ service UserService {
   rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteResponse);
   rpc GetUserList (Empty) returns (UserListResponse);
+  rpc Login (LoginRequest) returns (LoginResponse);
 }
 
 service RoleService {
@@ -54,6 +55,10 @@ message Permission {
   string created_at = 4;
 }
 
+message GetUserRequest {
+  string id = 1;
+}
+
 message UserResponse {
   bool success = 1;
   string message = 2;
@@ -64,8 +69,24 @@ message UserListResponse {
   repeated User users = 1;
 }
 
-message GetUserRequest {
-  string id = 1;
+message RoleResponse {
+  bool success = 1;
+  string message = 2;
+  Role role = 3;
+}
+
+message RoleListResponse {
+  repeated Role roles = 1;
+}
+
+message PermissionResponse {
+  bool success = 1;
+  string message = 2;
+  Permission permission = 3;
+}
+
+message PermissionListResponse {
+  repeated Permission permissions = 1;
 }
 
 message CreateUserRequest {
@@ -96,14 +117,8 @@ message DeleteUserRequest {
   string id = 1;
 }
 
-message RoleResponse {
-  bool success = 1;
-  string message = 2;
-  Role role = 3;
-}
-
-message RoleListResponse {
-  repeated Role roles = 1;
+message DeleteRoleRequest {
+  string id = 1;
 }
 
 message CreateRoleRequest {
@@ -119,20 +134,6 @@ message UpdateRoleRequest {
   string remark = 4;
 }
 
-message DeleteRoleRequest {
-  string id = 1;
-}
-
-message PermissionResponse {
-  bool success = 1;
-  string message = 2;
-  Permission permission = 3;
-}
-
-message PermissionListResponse {
-  repeated Permission permissions = 1;
-}
-
 message CreatePermissionRequest {
   string name = 1;
   string code = 2;
@@ -141,4 +142,16 @@ message CreatePermissionRequest {
 message DeleteResponse {
   bool success = 1;
   string message = 2;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  bool success = 1;
+  string message = 2;
+  string token = 3;
+  User user = 4;
 }

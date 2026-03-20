@@ -10,6 +10,7 @@ service UserService {
   rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteResponse);
   rpc GetUserList (Empty) returns (UserListResponse);
+  rpc Login (LoginRequest) returns (LoginResponse);
 }
 
 service RoleService {
@@ -141,4 +142,15 @@ message CreatePermissionRequest {
 message DeleteResponse {
   bool success = 1;
   string message = 2;
+}
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  bool success = 1;
+  string message = 2;
+  string token = 3;
+  User user = 4;
 }

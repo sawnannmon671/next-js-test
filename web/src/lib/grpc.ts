@@ -164,3 +164,12 @@ export const deleteApprovalStatus = (id: string): Promise<any> => {
     });
   });
 };
+export const login = (data: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!userClient) return reject(new Error("User service not found in proto"));
+    userClient.Login(data, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
+};

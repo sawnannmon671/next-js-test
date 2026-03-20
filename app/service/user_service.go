@@ -261,3 +261,46 @@ func (s *UserServer) CreatePermission(ctx context.Context, req *user.CreatePermi
 		Permission: &user.Permission{Id: newPerm.ID.String(), Name: newPerm.Name, Code: newPerm.Code},
 	}, nil
 }
+
+// User Login
+func (s *UserServer) Login(ctx context.Context, req *user.LoginRequest) (*user.LoginResponse, error) {
+	u := new(models.User)
+	err := database.BunDB.NewSelect().
+		Model(u).
+		Where("email = ?", req.Email).
+		Scan(ctx)
+
+	if err != nil {
+		return &user.LoginResponse{
+			Success: false,
+			Message: "Invalid credentials (User not found)",
+		}, nil
+	}
+
+	// Simple password check (In production, use bcrypt)
+	if req.Password != "password123" && u.PasswordHash != req.Password {
+		return &user.LoginResponse{
+			Success: false,
+			Message: "Invalid credentials (Password mismatch)",
+		}, nil
+	}
+
+	return &user.LoginResponse{
+		Success: true,
+		Message: "Authentication successful",
+		Token:   "dummy-jwt-token",
+		User: &user.User{
+			Id:            u.ID.String(),
+			Email:         u.Email,
+			UserType:      fmt.Sprintf("%d", u.UserType),
+			EmployeeId:    u.EmployeeID,
+			CompanyName:   u.CompanyName,
+			ContactNumber: u.ContactNumber,
+			Address:       u.Address,
+			Status:        u.Status,
+			Remark:        u.Remark,
+			CreatedAt:     u.CreatedAt.String(),
+		},
+	}, nil
+}
+

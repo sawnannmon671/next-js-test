@@ -9,6 +9,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  login,
   getRoles,
   createRole,
   getPermissions,
@@ -130,3 +131,13 @@ export async function createPermissionAction(data: any) {
     return { success: false, error: error.message };
   }
 }
+
+export async function loginAction(data: any) {
+  try {
+    const result = await login(data);
+    return { success: true, data: result };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+

@@ -1,11 +1,27 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
+  const router = useRouter();
   const [lang, setLang] = useState('en');
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
 
   const languages = [
     { code: 'en', name: 'US English', flag: '/flags/us.png' },
@@ -16,6 +32,7 @@ const Header = () => {
 
   return (
     <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 fixed left-64 right-0 top-0 z-20 shadow-sm backdrop-blur-md bg-white/80">
+      {/* Language Switcher */}
       <div className="relative">
         <button 
           onClick={() => setIsLangOpen(!isLangOpen)}
@@ -37,15 +54,12 @@ const Header = () => {
                   setLang(l.code);
                   setIsLangOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${lang === l.code ? 'bg-primary-light text-primary' : 'hover:bg-gray-50 text-gray-600'}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${lang === l.code ? 'bg-[#15aabf]/10 text-[#15aabf]' : 'hover:bg-gray-50 text-gray-600'}`}
               >
                 <div className="relative w-6 h-6 rounded-full overflow-hidden border border-gray-100 shadow-sm">
                    <Image src={l.flag} alt={l.name} fill className="object-cover" />
                 </div>
                 <span className="text-sm font-bold">{l.name}</span>
-                {lang === l.code && (
-                  <svg className="ml-auto" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                )}
               </button>
             ))}
           </div>
@@ -53,31 +67,47 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4 text-gray-400">
-          <button className="relative hover:text-gray-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+        {/* Profile Section */}
+        <div className="relative">
+          <button 
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="flex items-center gap-3 pl-6 border-l border-gray-200 group hover:opacity-80 transition-all cursor-pointer"
+          >
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-black text-gray-900 leading-tight">{user?.email?.split('@')[0] || "Guest"}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{Number(user?.user_type) === 0 ? 'Admin Host' : 'External Identity'}</p>
+            </div>
+            <div className="relative w-10 h-10 rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-[#15aabf]/30 transition-all">
+               <Image src={`https://ui-avatars.com/api/?name=${user?.email || 'G'}&background=15aabf&color=fff&bold=true`} alt="User" fill className="object-cover" />
+            </div>
+            <svg className={`text-gray-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </button>
-          <button className="relative hover:text-gray-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
-          </button>
-          <button className="hover:text-gray-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="m19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          </button>
-          <button className="hover:text-gray-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          </button>
-        </div>
 
-        <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-semibold text-gray-800">Jennifer</p>
-          </div>
-          <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-primary-shadow">
-             <Image src="https://ui-avatars.com/api/?name=Jennifer&background=15aabf&color=fff" alt="User" fill className="object-cover" />
-          </div>
-          <svg className="text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          {isProfileOpen && (
+            <div className="absolute top-full mt-4 right-0 w-64 bg-white rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-3 animate-in fade-in slide-in-from-top-4 duration-300 z-50">
+               <div className="p-4 border-b border-gray-50 mb-2">
+                  <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Session Identity</p>
+                  <p className="text-sm font-black text-gray-900 truncate">{user?.email || "anonymous@org.root"}</p>
+               </div>
+               
+               <button className="w-full flex items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 text-gray-600 transition-all group">
+                  <div className="p-2 bg-indigo-50 rounded-xl text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <span className="text-sm font-bold">Profile Settings</span>
+               </button>
+
+               <button 
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl hover:bg-rose-50 text-rose-600 transition-all group"
+               >
+                  <div className="p-2 bg-rose-50 rounded-xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  </div>
+                  <span className="text-sm font-bold">Sign Out</span>
+               </button>
+            </div>
+          )}
         </div>
       </div>
     </header>
