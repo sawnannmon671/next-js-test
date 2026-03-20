@@ -63,6 +63,26 @@ export const createUser = (data: any): Promise<any> => {
   });
 };
 
+export const updateUser = (data: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!userClient) return reject(new Error("User service not found in proto"));
+    userClient.UpdateUser(data, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
+};
+
+export const deleteUser = (id: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!userClient) return reject(new Error("User service not found in proto"));
+    userClient.DeleteUser({ id }, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
+};
+
 // Roles
 export const getRoles = (): Promise<any> => {
   return new Promise((resolve, reject) => {

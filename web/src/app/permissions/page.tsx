@@ -75,7 +75,7 @@ export default function PermissionsPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div className="bg-white rounded-[3rem] shadow-2xl w-full max-w-lg overflow-hidden border border-white/20">
+          <div className="bg-white rounded-[3rem] shadow-2xl w-full max-w-3xl overflow-hidden border border-white/20">
             <div className="bg-[#15aabf] px-10 py-10 text-white">
               <h2 className="text-3xl font-black tracking-tight">New Permission</h2>
             </div>
@@ -88,9 +88,21 @@ export default function PermissionsPage() {
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Code</label>
                 <input type="text" value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} className="w-full bg-[#F8FAFC] border-2 border-[#F1F5F9] rounded-2xl px-6 py-4 outline-none focus:border-[#15aabf] font-mono text-sm" placeholder="e.g. users.edit" required />
               </div>
-              <button type="submit" className="w-full bg-[#15aabf] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest shadow-xl shadow-[#15aabf]/20 hover:scale-[1.02] transition-all">
-                Save Permission
-              </button>
+              <div className="flex gap-4 pt-4">
+                <button 
+                  type="button" 
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 bg-white border-2 border-slate-100 text-slate-400 py-5 rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-slate-50 transition-all hover:text-slate-600"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="flex-[2] bg-[#15aabf] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest shadow-xl shadow-[#15aabf]/20 hover:scale-[1.02] transition-all"
+                >
+                  Save Permission
+                </button>
+              </div>
             </form>
           </div>
         </div>

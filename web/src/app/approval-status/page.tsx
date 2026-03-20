@@ -223,7 +223,7 @@ export default function ApprovalStatusPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div className="bg-white rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.3)] w-full max-w-xl overflow-hidden animate-in zoom-in-95 duration-200 border border-white/20">
+          <div className="bg-white rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.3)] w-full max-w-4xl overflow-hidden animate-in zoom-in-95 duration-200 border border-white/20">
             <div className="bg-[#15aabf] px-10 py-10 text-white relative overflow-hidden">
                <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-[100px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
                <div className="relative z-10 flex justify-between items-center">
@@ -290,8 +290,18 @@ export default function ApprovalStatusPage() {
                 ></textarea>
               </div>
 
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-[#15aabf] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-[#15aabf]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+              <div className="pt-8 flex gap-4">
+                <button 
+                  type="button" 
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 bg-white border-2 border-slate-100 text-slate-400 py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm hover:bg-slate-50 transition-all hover:text-slate-600"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="flex-[2] bg-[#15aabf] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-[#15aabf]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                >
                   <span>Commit Configuration</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>

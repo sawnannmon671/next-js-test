@@ -7,6 +7,8 @@ import {
   deleteApprovalStatus as deleteStatusGrpc,
   getUsers,
   createUser,
+  updateUser,
+  deleteUser,
   getRoles,
   createRole,
   getPermissions,
@@ -67,6 +69,24 @@ export async function fetchUsersAction() {
 export async function createUserAction(data: any) {
   try {
     const result = await createUser(data);
+    return { success: true, data: result };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateUserAction(data: any) {
+  try {
+    const result = await updateUser(data);
+    return { success: true, data: result };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteUserAction(id: string) {
+  try {
+    const result = await deleteUser(id);
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
