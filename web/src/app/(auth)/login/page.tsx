@@ -9,6 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -16,12 +17,10 @@ export default function LoginPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
-
     const result = await loginAction({ email, password });
     if (result.success && result.data.success) {
-      // Save user to localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('user', JSON.stringify(result.data.user));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(result.data.user));
       }
       router.push("/users");
     } else {
@@ -30,89 +29,143 @@ export default function LoginPage() {
     setIsSubmitting(false);
   };
 
+  const isEmailValid = email.length > 4 && email.includes("@");
+  const isPasswordStrong = password.length >= 8;
+
   return (
-    <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-6 font-sans overflow-hidden relative">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#15aabf]/20 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]"></div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-6 font-sans"
+      style={{ background: "#1e2140" }}
+    >
+      {/* Outer card */}
+      <div className="relative w-full max-w-[780px] rounded-[28px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+        style={{ background: "#252a4a" }}
+      >
+        {/* Decorative leaf shapes — top left */}
+        <div className="absolute top-0 left-0 w-[220px] h-[280px] pointer-events-none select-none">
+          {/* Back leaf — teal */}
+          <div className="absolute top-[-20px] left-[-30px] w-[180px] h-[240px] rounded-[50%_10%_50%_10%] rotate-[-15deg]"
+            style={{ background: "linear-gradient(145deg, #0db4cc, #0891b2)", opacity: 0.9 }}
+          />
+          {/* Middle leaf — blue */}
+          <div className="absolute top-[10px] left-[20px] w-[160px] h-[210px] rounded-[50%_10%_50%_10%] rotate-[10deg]"
+            style={{ background: "linear-gradient(145deg, #3b5bdb, #1e3a8a)", opacity: 0.95 }}
+          />
+          {/* Front leaf — dark teal */}
+          <div className="absolute top-[50px] left-[-10px] w-[130px] h-[180px] rounded-[50%_10%_50%_10%] rotate-[-5deg]"
+            style={{ background: "linear-gradient(145deg, #0e9488, #0d7270)", opacity: 0.85 }}
+          />
+        </div>
 
-      <div className="w-full max-w-[480px] relative z-10 animate-in fade-in zoom-in-95 duration-700">
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-          <div className="mb-12 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-[#15aabf] to-[#15aabf]/50 rounded-3xl mx-auto mb-8 flex items-center justify-center shadow-2xl shadow-[#15aabf]/30 ring-8 ring-white/5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h1 className="text-4xl font-black text-white tracking-tight mb-3">Identity Access</h1>
-            <p className="text-white/40 font-bold text-[10px] uppercase tracking-[0.4em]">Integrated Auth Protocol v2.4</p>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center py-14 px-10">
+          {/* Logo */}
+          <div className="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c0 0-8-4-8-10V5l8-3 8 3v7c0 6-8 10-8 10z"/></svg>
+            <span className="text-white text-3xl font-black tracking-tight">Approval<span style={{ color: "#22d3ee" }}>Sys</span></span>
           </div>
+          <p className="text-sm mb-10" style={{ color: "rgba(255,255,255,0.35)" }}>Fast &amp; Easy Approval Management</p>
 
+          <h1 className="text-white text-3xl font-bold mb-10 tracking-wide">Welcome Back!</h1>
+
+          {/* Error banner */}
           {error && (
-            <div className="mb-8 p-5 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-4 text-rose-400 animate-in slide-in-from-top-4">
-               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-               <span className="text-[11px] font-black uppercase tracking-wider">{error}</span>
+            <div className="w-full max-w-[320px] mb-6 px-4 py-3 rounded-xl text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20">
+              {error}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-8">
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] px-3">System Email Address</label>
-              <div className="relative group">
-                <input 
-                  type="email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  className="w-full bg-white/5 border-2 border-white/5 rounded-3xl px-8 py-5 h-[74px] outline-none focus:border-[#15aabf] focus:bg-white/10 transition-all font-bold text-white placeholder:text-white/10" 
-                  placeholder="identity@org.root" 
-                  required 
+          {/* Form */}
+          <form onSubmit={handleLogin} className="w-full max-w-[320px] space-y-8">
+            {/* Email */}
+            <div>
+              <label className="text-xs font-semibold mb-2 block" style={{ color: "rgba(255,255,255,0.5)" }}>Email</label>
+              <div className="relative flex items-center">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-transparent pb-2 text-white text-sm font-medium focus:outline-none"
+                  style={{ borderBottom: "1.5px solid rgba(255,255,255,0.15)", background: "transparent", WebkitBoxShadow: "0 0 0 1000px #252a4a inset", WebkitTextFillColor: "white" }}
+                  placeholder=""
+                  required
                 />
-                <div className="absolute right-8 top-1/2 -translate-y-1/2 text-white/10 group-focus-within:text-[#15aabf] transition-all">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                </div>
+                {isEmailValid && (
+                  <svg className="absolute right-0" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                )}
               </div>
+              {isEmailValid && <p className="text-[11px] mt-1 font-semibold" style={{ color: "#22d3ee" }}>Perfect!</p>}
             </div>
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] px-3">Security Token</label>
-              <div className="relative group">
-                <input 
-                  type="password" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
-                  className="w-full bg-white/5 border-2 border-white/5 rounded-3xl px-8 py-5 h-[74px] outline-none focus:border-[#15aabf] focus:bg-white/10 transition-all font-bold text-white placeholder:text-white/10" 
-                  placeholder="••••••••" 
-                  required 
+            {/* Password */}
+            <div>
+              <label className="text-xs font-semibold mb-2 block" style={{ color: "rgba(255,255,255,0.5)" }}>Password</label>
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-transparent pb-2 pr-8 text-white text-sm font-medium focus:outline-none"
+                  style={{ borderBottom: "1.5px solid rgba(255,255,255,0.15)", background: "transparent", WebkitBoxShadow: "0 0 0 1000px #252a4a inset", WebkitTextFillColor: "white" }}
+                  placeholder=""
+                  required
                 />
-                <div className="absolute right-8 top-1/2 -translate-y-1/2 text-white/10 group-focus-within:text-[#15aabf] transition-all">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 transition-colors"
+                  style={{ color: showPassword ? "#22d3ee" : "rgba(255,255,255,0.3)" }}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  )}
+                </button>
               </div>
+              {isPasswordStrong && <p className="text-[11px] mt-1 font-semibold" style={{ color: "#22d3ee" }}>Your password is strong.</p>}
             </div>
 
-            <div className="flex items-center justify-between px-2">
-               <label className="flex items-center gap-3 cursor-pointer group">
-                  <input type="checkbox" className="hidden" />
-                  <div className="w-6 h-6 rounded-lg bg-white/5 border-2 border-white/5 flex items-center justify-center transition-all group-hover:border-[#15aabf]/30">
-                     <div className="w-2.5 h-2.5 bg-[#15aabf] rounded-[2px] opacity-0 transition-opacity"></div>
-                  </div>
-                  <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Remember Identity</span>
-               </label>
-               <button type="button" className="text-[10px] font-black text-[#15aabf] uppercase tracking-widest hover:text-white transition-all">Forgot Token?</button>
-            </div>
-
-            <button 
-              type="submit" 
+            {/* Sign in button */}
+            <button
+              type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#15aabf] text-white py-7 rounded-[2.5rem] font-black uppercase tracking-[0.2em] shadow-2xl shadow-[#15aabf]/40 hover:scale-[1.02] hover:brightness-110 active:scale-95 transition-all text-xs border-none"
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white tracking-wide transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+              style={{ background: "linear-gradient(90deg, #06b6d4, #22d3ee)" }}
             >
-              {isSubmitting ? 'Authenticating...' : 'Initiate Secure Login'}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Signing in...
+                </span>
+              ) : "Sign in"}
             </button>
           </form>
 
-          <p className="mt-12 text-center text-[10px] font-black uppercase tracking-[0.2em] text-white/20">
-            No active identity? <Link href="/register" className="text-[#15aabf] hover:text-white transition-all">Provision New Account</Link>
-          </p>
+          {/* Forgot */}
+          <button type="button" className="mt-6 text-sm font-medium transition-colors hover:text-white"
+            style={{ color: "rgba(255,255,255,0.4)" }}>
+            Forget My Password
+          </button>
+
+          {/* Footer links */}
+          <div className="mt-16 flex items-center gap-3 text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>
+            <span>Term of use</span>
+            <span>|</span>
+            <span>Privacy policy</span>
+          </div>
+        </div>
+
+        {/* Bottom-right floating buttons */}
+        <div className="absolute bottom-6 right-6 flex flex-col items-end gap-2">
+          <Link href="/register"
+            className="px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-lg transition-all hover:brightness-110"
+            style={{ background: "linear-gradient(135deg, #3b82f6, #1d4ed8)" }}
+          >
+            Request An Account
+          </Link>
+          <button className="px-5 py-2.5 bg-white rounded-xl text-gray-700 text-xs font-bold shadow-lg hover:bg-gray-50 transition-all">
+            Need Help?
+          </button>
         </div>
       </div>
     </div>
