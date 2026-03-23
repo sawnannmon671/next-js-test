@@ -38,6 +38,7 @@ message User {
   bool status = 8;
   string remark = 9;
   string created_at = 10;
+  repeated string role_ids = 11;
 }
 
 message Role {
@@ -79,6 +80,7 @@ message CreateUserRequest {
   string address = 7;
   bool status = 8;
   string remark = 9;
+  repeated string role_ids = 10;
 }
 
 message UpdateUserRequest {
@@ -91,6 +93,7 @@ message UpdateUserRequest {
   string address = 7;
   bool status = 8;
   string remark = 9;
+  repeated string role_ids = 10;
 }
 
 message DeleteUserRequest {

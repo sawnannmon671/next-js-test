@@ -21,13 +21,17 @@ type UserServer struct {
 // User List
 func (s *UserServer) GetUserList(ctx context.Context, req *user.Empty) (*user.UserListResponse, error) {
 	var users []models.User
-	err := database.BunDB.NewSelect().Model(&users).Order("created_at DESC").Scan(ctx)
+	err := database.BunDB.NewSelect().Model(&users).Relation("Roles").Order("created_at DESC").Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var pbUsers []*user.User
 	for _, u := range users {
+		var roleIds []string
+		for _, r := range u.Roles {
+			roleIds = append(roleIds, r.ID.String())
+		}
 		pbUsers = append(pbUsers, &user.User{
 			Id:            u.ID.String(),
 			Email:         u.Email,
@@ -39,6 +43,7 @@ func (s *UserServer) GetUserList(ctx context.Context, req *user.Empty) (*user.Us
 			Status:        u.Status,
 			Remark:        u.Remark,
 			CreatedAt:     u.CreatedAt.Format("2006-01-02 15:04:05"),
+			RoleIds:       roleIds,
 		})
 	}
 
@@ -53,9 +58,14 @@ func (s *UserServer) GetUser(ctx context.Context, req *user.GetUserRequest) (*us
 	}
 
 	var u models.User
-	err = database.BunDB.NewSelect().Model(&u).Where("id = ?", id).Scan(ctx)
+	err = database.BunDB.NewSelect().Model(&u).Where("id = ?", id).Relation("Roles").Scan(ctx)
 	if err != nil {
 		return &user.UserResponse{Success: false, Message: "User not found"}, nil
+	}
+
+	var roleIds []string
+	for _, r := range u.Roles {
+		roleIds = append(roleIds, r.ID.String())
 	}
 
 	return &user.UserResponse{
@@ -71,6 +81,7 @@ func (s *UserServer) GetUser(ctx context.Context, req *user.GetUserRequest) (*us
 			Status:        u.Status,
 			Remark:        u.Remark,
 			CreatedAt:     u.CreatedAt.Format("2006-01-02 15:04:05"),
+			RoleIds:       roleIds,
 		},
 	}, nil
 }
@@ -81,7 +92,7 @@ func (s *UserServer) CreateUser(ctx context.Context, req *user.CreateUserRequest
 	newUser := &models.User{
 		ID:            uuid.New(),
 		Email:         req.Email,
-		PasswordHash:  "hashed_password", 
+		PasswordHash:  "hashed_password",
 		UserType:      userType,
 		EmployeeID:    req.EmployeeId,
 		CompanyName:   req.CompanyName,
@@ -96,19 +107,52 @@ func (s *UserServer) CreateUser(ctx context.Context, req *user.CreateUserRequest
 		return &user.UserResponse{Success: false, Message: err.Error()}, nil
 	}
 
+	// Assign roles
+	if len(req.RoleIds) > 0 {
+		for _, roleIdStr := range req.RoleIds {
+			roleId, err := uuid.Parse(roleIdStr)
+			if err != nil {
+				return &user.UserResponse{Success: false, Message: "Invalid role ID: " + roleIdStr}, nil
+			}
+			userRole := &models.UserRole{
+				ID:     uuid.New(),
+				UserID: newUser.ID,
+				RoleID: roleId,
+			}
+			_, err = database.BunDB.NewInsert().Model(userRole).Exec(ctx)
+			if err != nil {
+				return &user.UserResponse{Success: false, Message: "Failed to assign role: " + err.Error()}, nil
+			}
+		}
+	}
+
+	// Fetch created user with roles
+	var createdUser models.User
+	err = database.BunDB.NewSelect().Model(&createdUser).Where("id = ?", newUser.ID).Relation("Roles").Scan(ctx)
+	if err != nil {
+		return &user.UserResponse{Success: false, Message: "Failed to fetch created user: " + err.Error()}, nil
+	}
+
+	// Convert role IDs to string slice
+	var roleIds []string
+	for _, r := range createdUser.Roles {
+		roleIds = append(roleIds, r.ID.String())
+	}
+
 	return &user.UserResponse{
 		Success: true,
 		Message: "User created",
 		User: &user.User{
-			Id:            newUser.ID.String(),
-			Email:         newUser.Email,
-			UserType:      fmt.Sprintf("%d", newUser.UserType),
-			EmployeeId:    newUser.EmployeeID,
-			CompanyName:   newUser.CompanyName,
-			ContactNumber: newUser.ContactNumber,
-			Address:       newUser.Address,
-			Status:        newUser.Status,
-			Remark:        newUser.Remark,
+			Id:            createdUser.ID.String(),
+			Email:         createdUser.Email,
+			UserType:      fmt.Sprintf("%d", createdUser.UserType),
+			EmployeeId:    createdUser.EmployeeID,
+			CompanyName:   createdUser.CompanyName,
+			ContactNumber: createdUser.ContactNumber,
+			Address:       createdUser.Address,
+			Status:        createdUser.Status,
+			Remark:        createdUser.Remark,
+			RoleIds:       roleIds,
 		},
 	}, nil
 }
@@ -138,19 +182,59 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *user.UpdateUserRequest
 		return &user.UserResponse{Success: false, Message: err.Error()}, nil
 	}
 
+	// Update role assignments
+	// First, delete existing role assignments for this user
+	_, err = database.BunDB.NewDelete().Model((*models.UserRole)(nil)).Where("user_id = ?", id).Exec(ctx)
+	if err != nil {
+		return &user.UserResponse{Success: false, Message: "Failed to clear existing roles: " + err.Error()}, nil
+	}
+
+	// Insert new role assignments
+	if len(req.RoleIds) > 0 {
+		for _, roleIdStr := range req.RoleIds {
+			roleId, err := uuid.Parse(roleIdStr)
+			if err != nil {
+				return &user.UserResponse{Success: false, Message: "Invalid role ID: " + roleIdStr}, nil
+			}
+			userRole := &models.UserRole{
+				ID:     uuid.New(),
+				UserID: id,
+				RoleID: roleId,
+			}
+			_, err = database.BunDB.NewInsert().Model(userRole).Exec(ctx)
+			if err != nil {
+				return &user.UserResponse{Success: false, Message: "Failed to assign role: " + err.Error()}, nil
+			}
+		}
+	}
+
+	// Fetch updated user with roles to return
+	var updatedUser models.User
+	err = database.BunDB.NewSelect().Model(&updatedUser).Where("id = ?", id).Relation("Roles").Scan(ctx)
+	if err != nil {
+		return &user.UserResponse{Success: false, Message: "Failed to fetch updated user: " + err.Error()}, nil
+	}
+
+	// Convert role IDs to string slice
+	var roleIds []string
+	for _, r := range updatedUser.Roles {
+		roleIds = append(roleIds, r.ID.String())
+	}
+
 	return &user.UserResponse{
 		Success: true,
 		Message: "User updated",
 		User: &user.User{
 			Id:            id.String(),
-			Email:         req.Email,
-			UserType:      req.UserType,
-			EmployeeId:    req.EmployeeId,
-			CompanyName:   req.CompanyName,
-			ContactNumber: req.ContactNumber,
-			Address:       req.Address,
-			Status:        req.Status,
-			Remark:        req.Remark,
+			Email:         updatedUser.Email,
+			UserType:      fmt.Sprintf("%d", updatedUser.UserType),
+			EmployeeId:    updatedUser.EmployeeID,
+			CompanyName:   updatedUser.CompanyName,
+			ContactNumber: updatedUser.ContactNumber,
+			Address:       updatedUser.Address,
+			Status:        updatedUser.Status,
+			Remark:        updatedUser.Remark,
+			RoleIds:       roleIds,
 		},
 	}, nil
 }
@@ -208,7 +292,7 @@ func (s *UserServer) CreateRole(ctx context.Context, req *user.CreateRoleRequest
 	return &user.RoleResponse{
 		Success: true,
 		Message: "Role created",
-		Role: &user.Role{Id: newRole.ID.String(), Name: newRole.Name},
+		Role:    &user.Role{Id: newRole.ID.String(), Name: newRole.Name},
 	}, nil
 }
 
@@ -256,8 +340,8 @@ func (s *UserServer) CreatePermission(ctx context.Context, req *user.CreatePermi
 	}
 
 	return &user.PermissionResponse{
-		Success: true,
-		Message: "Permission created",
+		Success:    true,
+		Message:    "Permission created",
 		Permission: &user.Permission{Id: newPerm.ID.String(), Name: newPerm.Name, Code: newPerm.Code},
 	}, nil
 }
@@ -303,4 +387,3 @@ func (s *UserServer) Login(ctx context.Context, req *user.LoginRequest) (*user.L
 		},
 	}, nil
 }
-
