@@ -2,29 +2,48 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { fetchPermissionsAction, createPermissionAction, fetchRolesAction } from "@/lib/actions";
+import { fetchPermissionsAction, createPermissionAction } from "@/lib/actions";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
 export default function PermissionsPage() {
   const router = useRouter();
   const [permissions, setPermissions] = useState<any[]>([]);
-  const [roles, setRoles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [seeding, setSeeding] = useState(false);
+  const [selectedPermissionIds, setSelectedPermissionIds] = useState<string[]>([]);
 
   const fetchData = async () => {
     setIsLoading(true);
-    const [permissionsResponse, rolesResponse] = await Promise.all([
-      fetchPermissionsAction(),
-      fetchRolesAction()
-    ]);
-    if (permissionsResponse.success) setPermissions(permissionsResponse.data || []);
-    if (rolesResponse.success) setRoles(rolesResponse.data || []);
+    const response = await fetchPermissionsAction();
+    if (response.success) setPermissions(response.data || []);
     setIsLoading(false);
+  };
+
+  const togglePermission = (permissionId: string) => {
+    setSelectedPermissionIds(prev =>
+      prev.includes(permissionId)
+        ? prev.filter(id => id !== permissionId)
+        : [...prev, permissionId]
+    );
+  };
+
+  const toggleGroup = (groupPermissions: any[]) => {
+    const groupIds = groupPermissions.map(p => p.id);
+    const allSelected = groupIds.every(id => selectedPermissionIds.includes(id));
+    if (allSelected) {
+      setSelectedPermissionIds(prev => prev.filter(id => !groupIds.includes(id)));
+    } else {
+      setSelectedPermissionIds(prev => [...new Set([...prev, ...groupIds])]);
+    }
+  };
+
+  const isGroupSelected = (groupPermissions: any[]) => {
+    const groupIds = groupPermissions.map(p => p.id);
+    return groupIds.length > 0 && groupIds.every(id => selectedPermissionIds.includes(id));
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -38,35 +57,38 @@ export default function PermissionsPage() {
     );
   }, [permissions, searchTerm]);
 
-  const pairs = useMemo(() => {
-    const result: Array<{role: any, permission: any}> = [];
-    roles.forEach(role => {
-      const rolePermissionIds = role.permission_ids || [];
-      rolePermissionIds.forEach((permId: string) => {
-        const permission = permissions.find(p => p.id === permId);
-        if (permission) {
-          result.push({ role, permission });
-        }
-      });
-    });
-    return result;
-  }, [roles, permissions]);
 
-  const filteredPairs = useMemo(() => {
-    if (!searchTerm) return pairs;
-    const lowerSearch = searchTerm.toLowerCase();
-    return pairs.filter(pair => 
-      pair.role.name?.toLowerCase().includes(lowerSearch) ||
-      pair.permission.name?.toLowerCase().includes(lowerSearch) ||
-      pair.permission.code?.toLowerCase().includes(lowerSearch)
-    );
-  }, [pairs, searchTerm]);
 
-  const totalPages = Math.ceil(filteredPairs.length / pageSize);
-  const paginatedPairs = useMemo(() => {
+
+
+  const totalPages = Math.ceil(filteredPermissions.length / pageSize);
+  const paginatedPermissions = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return filteredPairs.slice(startIndex, startIndex + pageSize);
-  }, [filteredPairs, currentPage, pageSize]);
+    return filteredPermissions.slice(startIndex, startIndex + pageSize);
+  }, [filteredPermissions, currentPage, pageSize]);
+
+  const groupedPaginatedPermissions = useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    paginatedPermissions.forEach(p => {
+      const category = p.code?.split('.')[0] || 'other';
+      if (!groups[category]) groups[category] = [];
+      groups[category].push(p);
+    });
+    const order = ['approval_status', 'permissions', 'roles', 'users'];
+    const sortedCategories = Object.keys(groups).sort((a, b) => {
+      const aIndex = order.indexOf(a);
+      const bIndex = order.indexOf(b);
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return a.localeCompare(b);
+    });
+    return sortedCategories.map(category => ({
+      category,
+      label: category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      permissions: groups[category]
+    }));
+  }, [paginatedPermissions]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -148,7 +170,7 @@ export default function PermissionsPage() {
                 <div className="relative w-full sm:w-80">
                   <input
                     type="text"
-                    placeholder="Search roles or permissions..."
+                    placeholder="Search permissions..."
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
@@ -188,67 +210,65 @@ export default function PermissionsPage() {
                 </div>
               </div>
 
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Role</th>
-                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Permission</th>
-                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Settings</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {paginatedPairs.length > 0 ? (
-                    paginatedPairs.map((pair, index) => (
-                      <tr key={`${pair.role.id}-${pair.permission.id}`} className="hover:bg-gray-50/40 transition-all">
-                        <td className="px-10 py-8 font-black text-gray-900">{pair.role.name}</td>
-                        <td className="px-10 py-8">
-                          <div className="space-y-1">
-                            <span className="font-bold text-gray-800 block">{pair.permission.name}</span>
-                            <span className="px-2 py-0.5 bg-gray-100 rounded text-xs font-mono text-gray-600 border border-gray-200">{pair.permission.code}</span>
-                          </div>
-                        </td>
-                        <td className="px-10 py-8 text-right">
-                          <div className="flex justify-end gap-3">
-                            <button 
-                              onClick={() => router.push(`/roles/${pair.role.id}/edit`)}
-                              className="p-4 bg-white border-2 border-[#15aabf]/30 text-[#15aabf] rounded-2xl hover:border-[#15aabf] hover:text-[#15aabf] hover:shadow-xl hover:shadow-[#15aabf]/10 transition-all"
-                              title="Edit Role"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            </button>
-                            <button 
-                              onClick={() => router.push(`/permissions/${pair.permission.id}/edit`)}
-                              className="p-4 bg-white border-2 border-emerald-300/30 text-emerald-500 rounded-2xl hover:border-emerald-500 hover:text-emerald-500 hover:shadow-xl hover:shadow-emerald-500/10 transition-all"
-                              title="Edit Permission"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={3} className="px-10 py-20 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                          </div>
-                          <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
-                            {searchTerm ? 'No role-permission pairs match your search' : 'No Role-Permission Assignments Found'}
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <div className="space-y-8">
+                {groupedPaginatedPermissions.length > 0 ? (
+                  groupedPaginatedPermissions.map((group) => (
+                    <div key={group.category} className="space-y-4">
+                       <div 
+                         className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all"
+                         onClick={() => toggleGroup(group.permissions)}
+                       >
+                         <input
+                           type="checkbox"
+                           checked={isGroupSelected(group.permissions)}
+                           onChange={() => toggleGroup(group.permissions)}
+                           className="w-5 h-5 rounded border-gray-300 text-[#15aabf] focus:ring-[#15aabf]"
+                           onClick={(e) => e.stopPropagation()}
+                         />
+                          <h3 className="text-sm font-bold text-gray-800">{group.category}</h3>
+                       </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                         {group.permissions.map((permission) => (
+                           <div 
+                             key={permission.id} 
+                             className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-[#15aabf]/30 transition-all cursor-pointer"
+                             onClick={() => togglePermission(permission.id)}
+                           >
+                             <input
+                               type="checkbox"
+                               checked={selectedPermissionIds.includes(permission.id)}
+                               onChange={() => togglePermission(permission.id)}
+                               className="w-5 h-5 rounded border-gray-300 text-[#15aabf] focus:ring-[#15aabf]"
+                               onClick={(e) => e.stopPropagation()}
+                             />
+                             <div>
+                               <span className="text-sm font-bold text-gray-800 block">{permission.code}</span>
+                               <span className="text-[10px] text-gray-500">{permission.name}</span>
+                             </div>
+                           </div>
+                         ))}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-20">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      </div>
+                      <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
+                        {searchTerm ? 'No permissions match your search' : 'No Permissions Found'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Pagination Footer */}
-              {filteredPairs.length > 0 && (
+              {filteredPermissions.length > 0 && (
                 <div className="p-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4 justify-between items-center">
                   <div className="text-sm text-gray-600">
-                    Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filteredPairs.length)} of {filteredPairs.length} entries
+                    Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filteredPermissions.length)} of {filteredPermissions.length} entries
                   </div>
                   <div className="flex items-center gap-2">
                     <button
