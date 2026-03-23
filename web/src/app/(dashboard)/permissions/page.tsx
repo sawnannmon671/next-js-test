@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { fetchPermissionsAction, createPermissionAction } from "@/lib/actions";
+import { fetchPermissionsAction, createPermissionAction, fetchRolesAction } from "@/lib/actions";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
 export default function PermissionsPage() {
   const router = useRouter();
   const [permissions, setPermissions] = useState<any[]>([]);
+  const [roles, setRoles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,8 +18,12 @@ export default function PermissionsPage() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const response = await fetchPermissionsAction();
-    if (response.success) setPermissions(response.data || []);
+    const [permissionsResponse, rolesResponse] = await Promise.all([
+      fetchPermissionsAction(),
+      fetchRolesAction()
+    ]);
+    if (permissionsResponse.success) setPermissions(permissionsResponse.data || []);
+    if (rolesResponse.success) setRoles(rolesResponse.data || []);
     setIsLoading(false);
   };
 
@@ -33,11 +38,35 @@ export default function PermissionsPage() {
     );
   }, [permissions, searchTerm]);
 
-  const totalPages = Math.ceil(filteredPermissions.length / pageSize);
-  const paginatedPermissions = useMemo(() => {
+  const pairs = useMemo(() => {
+    const result: Array<{role: any, permission: any}> = [];
+    roles.forEach(role => {
+      const rolePermissionIds = role.permission_ids || [];
+      rolePermissionIds.forEach((permId: string) => {
+        const permission = permissions.find(p => p.id === permId);
+        if (permission) {
+          result.push({ role, permission });
+        }
+      });
+    });
+    return result;
+  }, [roles, permissions]);
+
+  const filteredPairs = useMemo(() => {
+    if (!searchTerm) return pairs;
+    const lowerSearch = searchTerm.toLowerCase();
+    return pairs.filter(pair => 
+      pair.role.name?.toLowerCase().includes(lowerSearch) ||
+      pair.permission.name?.toLowerCase().includes(lowerSearch) ||
+      pair.permission.code?.toLowerCase().includes(lowerSearch)
+    );
+  }, [pairs, searchTerm]);
+
+  const totalPages = Math.ceil(filteredPairs.length / pageSize);
+  const paginatedPairs = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return filteredPermissions.slice(startIndex, startIndex + pageSize);
-  }, [filteredPermissions, currentPage, pageSize]);
+    return filteredPairs.slice(startIndex, startIndex + pageSize);
+  }, [filteredPairs, currentPage, pageSize]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -119,7 +148,7 @@ export default function PermissionsPage() {
                 <div className="relative w-full sm:w-80">
                   <input
                     type="text"
-                    placeholder="Search permissions..."
+                    placeholder="Search roles or permissions..."
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
@@ -162,33 +191,37 @@ export default function PermissionsPage() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Name</th>
-                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Code</th>
-                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Created At</th>
+                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Role</th>
+                    <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">Permission</th>
                     <th className="px-10 py-7 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Settings</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {paginatedPermissions.length > 0 ? (
-                    paginatedPermissions.map((p) => (
-                      <tr key={p.id} className="hover:bg-gray-50/40 transition-all">
-                        <td className="px-10 py-8 font-black text-gray-900">{p.name}</td>
-                        <td className="px-10 py-8"><span className="px-3 py-1 bg-gray-100 rounded-lg text-xs font-mono text-gray-600 border border-gray-200">{p.code}</span></td>
-                        <td className="px-10 py-8 text-sm text-gray-500">{p.created_at}</td>
+                  {paginatedPairs.length > 0 ? (
+                    paginatedPairs.map((pair, index) => (
+                      <tr key={`${pair.role.id}-${pair.permission.id}`} className="hover:bg-gray-50/40 transition-all">
+                        <td className="px-10 py-8 font-black text-gray-900">{pair.role.name}</td>
+                        <td className="px-10 py-8">
+                          <div className="space-y-1">
+                            <span className="font-bold text-gray-800 block">{pair.permission.name}</span>
+                            <span className="px-2 py-0.5 bg-gray-100 rounded text-xs font-mono text-gray-600 border border-gray-200">{pair.permission.code}</span>
+                          </div>
+                        </td>
                         <td className="px-10 py-8 text-right">
                           <div className="flex justify-end gap-3">
                             <button 
-                              onClick={() => router.push(`/permissions/${p.id}/edit`)}
+                              onClick={() => router.push(`/roles/${pair.role.id}/edit`)}
                               className="p-4 bg-white border-2 border-[#15aabf]/30 text-[#15aabf] rounded-2xl hover:border-[#15aabf] hover:text-[#15aabf] hover:shadow-xl hover:shadow-[#15aabf]/10 transition-all"
+                              title="Edit Role"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </button>
-                            {/* Delete button placeholder - disabled until backend supports delete */}
                             <button 
-                              disabled
-                              className="p-4 bg-white border-2 border-gray-100 text-gray-300 rounded-2xl cursor-not-allowed"
+                              onClick={() => router.push(`/permissions/${pair.permission.id}/edit`)}
+                              className="p-4 bg-white border-2 border-emerald-300/30 text-emerald-500 rounded-2xl hover:border-emerald-500 hover:text-emerald-500 hover:shadow-xl hover:shadow-emerald-500/10 transition-all"
+                              title="Edit Permission"
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                             </button>
                           </div>
                         </td>
@@ -196,13 +229,13 @@ export default function PermissionsPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="px-10 py-20 text-center">
+                      <td colSpan={3} className="px-10 py-20 text-center">
                         <div className="flex flex-col items-center gap-4">
                           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                           </div>
                           <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
-                            {searchTerm ? 'No permissions match your search' : 'No Permissions Found'}
+                            {searchTerm ? 'No role-permission pairs match your search' : 'No Role-Permission Assignments Found'}
                           </p>
                         </div>
                       </td>
@@ -212,10 +245,10 @@ export default function PermissionsPage() {
               </table>
 
               {/* Pagination Footer */}
-              {filteredPermissions.length > 0 && (
+              {filteredPairs.length > 0 && (
                 <div className="p-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4 justify-between items-center">
                   <div className="text-sm text-gray-600">
-                    Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filteredPermissions.length)} of {filteredPermissions.length} entries
+                    Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filteredPairs.length)} of {filteredPairs.length} entries
                   </div>
                   <div className="flex items-center gap-2">
                     <button

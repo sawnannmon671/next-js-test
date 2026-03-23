@@ -257,19 +257,25 @@ func (s *UserServer) DeleteUser(ctx context.Context, req *user.DeleteUserRequest
 // Role List
 func (s *UserServer) GetRoleList(ctx context.Context, req *user.Empty) (*user.RoleListResponse, error) {
 	var roles []models.Role
-	err := database.BunDB.NewSelect().Model(&roles).Order("created_at DESC").Scan(ctx)
+	err := database.BunDB.NewSelect().Model(&roles).Relation("Permissions").Order("created_at DESC").Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var pbRoles []*user.Role
 	for _, r := range roles {
+		// Convert permissions to permission IDs
+		var permissionIds []string
+		for _, p := range r.Permissions {
+			permissionIds = append(permissionIds, p.ID.String())
+		}
 		pbRoles = append(pbRoles, &user.Role{
-			Id:        r.ID.String(),
-			Name:      r.Name,
-			Status:    r.Status,
-			Remark:    r.Remark,
-			CreatedAt: r.CreatedAt.Format("2006-01-02 15:04:05"),
+			Id:            r.ID.String(),
+			Name:          r.Name,
+			Status:        r.Status,
+			Remark:        r.Remark,
+			CreatedAt:     r.CreatedAt.Format("2006-01-02 15:04:05"),
+			PermissionIds: permissionIds,
 		})
 	}
 	return &user.RoleListResponse{Roles: pbRoles}, nil

@@ -47,6 +47,7 @@ message Role {
   bool status = 3;
   string remark = 4;
   string created_at = 5;
+  repeated string permission_ids = 6;
 }
 
 message Permission {

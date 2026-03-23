@@ -188,6 +188,7 @@ type Role struct {
 	Status        bool                   `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	PermissionIds []string               `protobuf:"bytes,6,rep,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,6 +256,13 @@ func (x *Role) GetCreatedAt() string {
 		return x.CreatedAt
 	}
 	return ""
+}
+
+func (x *Role) GetPermissionIds() []string {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
 }
 
 type Permission struct {
@@ -1374,14 +1382,15 @@ const file_user_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x19\n" +
-	"\brole_ids\x18\v \x03(\tR\aroleIds\"y\n" +
+	"\brole_ids\x18\v \x03(\tR\aroleIds\"\xa0\x01\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\bR\x06status\x12\x16\n" +
 	"\x06remark\x18\x04 \x01(\tR\x06remark\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\tR\tcreatedAt\"c\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12%\n" +
+	"\x0epermission_ids\x18\x06 \x03(\tR\rpermissionIds\"c\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
