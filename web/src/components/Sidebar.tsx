@@ -20,7 +20,7 @@ const Sidebar = () => {
     if (pathname === '/settings' || pathname === '/approval-status') {
       setIsSettingsOpen(true);
     }
-    if (isActivePath('/users') || isActivePath('/roles') || isActivePath('/permissions')) {
+    if (isActivePath('/users') || isActivePath('/roles')) {
       setIsUserOpen(true);
     }
   }, [pathname]);
@@ -211,14 +211,7 @@ const Sidebar = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 Role
               </Link>
-              <Link 
-                href="/permissions" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActivePath('/permissions') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActivePath('/permissions') ? activeStyle : {}}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Permission
-              </Link>
+
             </div>
           )}
         </div>
