@@ -279,15 +279,15 @@ export default function EditUserPage() {
                      </div>
                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {roles.map((role) => (
-                          <div key={role.id} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-[#15aabf]/30 transition-all cursor-pointer" onClick={() => handleRoleToggle(role.id)}>
-                            <input
-                              type="checkbox"
-                              checked={selectedRoleIds.includes(role.id)}
-                              onChange={() => handleRoleToggle(role.id)}
-                              className="w-5 h-5 rounded border-gray-300 text-[#15aabf] focus:ring-[#15aabf]"
-                            />
+                           <div key={role.id} className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${selectedRoleIds.includes(role.id) ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100 hover:border-emerald-300/30'}`} onClick={() => handleRoleToggle(role.id)}>
+                             <input
+                               type="checkbox"
+                               checked={selectedRoleIds.includes(role.id)}
+                               onChange={() => handleRoleToggle(role.id)}
+                               className="w-5 h-5 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                             />
                             <div>
-                              <span className="text-sm font-bold text-gray-800 block">{role.name}</span>
+                               <span className={`text-sm font-bold block ${selectedRoleIds.includes(role.id) ? 'text-emerald-800' : 'text-gray-800'}`}>{role.name}</span>
                               <span className="text-[10px] text-gray-500">{role.status ? 'Active' : 'Inactive'}</span>
                             </div>
                           </div>
