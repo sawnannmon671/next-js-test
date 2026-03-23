@@ -10,12 +10,14 @@ const Header = () => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    setMounted(true);
   }, []);
 
   const handleLogout = () => {
@@ -74,11 +76,11 @@ const Header = () => {
             className="flex items-center gap-3 pl-6 border-l border-gray-200 group hover:opacity-80 transition-all cursor-pointer"
           >
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-gray-900 leading-tight">{user?.email?.split('@')[0] || "Guest"}</p>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{Number(user?.user_type) === 0 ? 'Admin Host' : 'External Identity'}</p>
+              <p className="text-sm font-black text-gray-900 leading-tight">{mounted ? (user?.email?.split('@')[0] || "Guest") : "Guest"}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{mounted ? (Number(user?.user_type) === 0 ? 'Admin Host' : 'External Identity') : 'External Identity'}</p>
             </div>
             <div className="relative w-10 h-10 rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-[#15aabf]/30 transition-all">
-               <Image src={`https://ui-avatars.com/api/?name=${user?.email || 'G'}&background=15aabf&color=fff&bold=true`} alt="User" fill className="object-cover" />
+               <Image src={mounted ? `https://ui-avatars.com/api/?name=${user?.email || 'G'}&background=15aabf&color=fff&bold=true` : `https://ui-avatars.com/api/?name=G&background=15aabf&color=fff&bold=true`} alt="User" fill className="object-cover" />
             </div>
             <svg className={`text-gray-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </button>
@@ -87,7 +89,7 @@ const Header = () => {
             <div className="absolute top-full mt-4 right-0 w-64 bg-white rounded-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 p-3 animate-in fade-in slide-in-from-top-4 duration-300 z-50">
                <div className="p-4 border-b border-gray-50 mb-2">
                   <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-1">Session Identity</p>
-                  <p className="text-sm font-black text-gray-900 truncate">{user?.email || "anonymous@org.root"}</p>
+                  <p className="text-sm font-black text-gray-900 truncate">{mounted ? (user?.email || "anonymous@org.root") : "anonymous@org.root"}</p>
                </div>
                
                <button className="w-full flex items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 text-gray-600 transition-all group">

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createUserAction } from "@/lib/actions";
+import { createUserAction, fetchRolesAction } from "@/lib/actions";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
@@ -11,6 +11,8 @@ export default function CreateUserPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [roles, setRoles] = useState<any[]>([]);
+  const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -23,6 +25,22 @@ export default function CreateUserPage() {
     status: true,
     remark: ""
   });
+
+  useEffect(() => {
+    const loadRoles = async () => {
+      const response = await fetchRolesAction();
+      if (response.success) setRoles(response.data || []);
+    };
+    loadRoles();
+  }, []);
+
+  const handleRoleToggle = (roleId: string) => {
+    setSelectedRoleIds(prev =>
+      prev.includes(roleId)
+        ? prev.filter(id => id !== roleId)
+        : [...prev, roleId]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +60,10 @@ export default function CreateUserPage() {
     }
 
     setIsSubmitting(true);
-    const response = await createUserAction(formData);
+    const response = await createUserAction({
+      ...formData,
+      role_ids: selectedRoleIds
+    });
     if (response.success) {
       router.push("/users");
     } else {
@@ -193,6 +214,35 @@ export default function CreateUserPage() {
                            <input type="text" value={formData.remark} onChange={(e) => handleChange('remark', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] px-8 py-5 h-[74px] outline-none focus:border-[#15aabf] focus:bg-white transition-all font-medium" placeholder="မှတ်ချက်" />
                         </div>
                      </div>
+                  </div>
+
+                  {/* Section: Role Assignment */}
+                  <div className="space-y-8">
+                     <div className="flex items-center gap-4 border-b border-gray-100 pb-4">
+                        <span className="p-2.5 bg-rose-50 rounded-2xl text-rose-500">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </span>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">04 Role Assignment</h3>
+                     </div>
+                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {roles.map((role) => (
+                          <div key={role.id} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-[#15aabf]/30 transition-all cursor-pointer" onClick={() => handleRoleToggle(role.id)}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRoleIds.includes(role.id)}
+                              onChange={() => handleRoleToggle(role.id)}
+                              className="w-5 h-5 rounded border-gray-300 text-[#15aabf] focus:ring-[#15aabf]"
+                            />
+                            <div>
+                              <span className="text-sm font-bold text-gray-800 block">{role.name}</span>
+                              <span className="text-[10px] text-gray-500">{role.status ? 'Active' : 'Inactive'}</span>
+                            </div>
+                          </div>
+                        ))}
+                     </div>
+                     {roles.length === 0 && (
+                       <p className="text-gray-500 text-sm italic">No roles available. Please create roles first.</p>
+                     )}
                   </div>
 
                   <div className="pt-10 flex gap-6">

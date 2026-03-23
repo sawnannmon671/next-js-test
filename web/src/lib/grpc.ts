@@ -104,6 +104,16 @@ export const createRole = (data: any): Promise<any> => {
   });
 };
 
+export const updateRole = (data: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (!roleClient) return reject(new Error("Role service not found in proto"));
+    roleClient.UpdateRole(data, (err: any, response: any) => {
+      if (err) reject(err);
+      else resolve(response);
+    });
+  });
+};
+
 // Permissions
 export const getPermissions = (): Promise<any> => {
   return new Promise((resolve, reject) => {

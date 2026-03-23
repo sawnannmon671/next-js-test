@@ -20,12 +20,22 @@ const Sidebar = () => {
     if (pathname === '/settings' || pathname === '/approval-status') {
       setIsSettingsOpen(true);
     }
-    if (pathname === '/users' || pathname === '/roles' || pathname === '/permissions') {
+    if (isActivePath('/users') || isActivePath('/roles') || isActivePath('/permissions')) {
       setIsUserOpen(true);
     }
   }, [pathname]);
 
   const isActive = (path: string) => pathname === path;
+  
+  // Check if current pathname starts with given path (for child routes)
+  const isActivePath = (path: string) => {
+    // Exact match
+    if (pathname === path) return true;
+    // Check if pathname starts with path followed by slash or query param
+    if (pathname.startsWith(path + '/')) return true;
+    if (pathname.startsWith(path + '?')) return true;
+    return false;
+  };
 
   // Premium active style with subtle glow and contrast
   const activeStyle = {
@@ -187,24 +197,24 @@ const Sidebar = () => {
             <div className="mt-1 ml-6 pl-4 border-l-2 border-white/20 space-y-1 animate-in slide-in-from-left-2 duration-300">
               <Link 
                 href="/users" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/users') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActive('/users') ? activeStyle : {}}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActivePath('/users') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                style={isActivePath('/users') ? activeStyle : {}}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 User List
               </Link>
               <Link 
                 href="/roles" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/roles') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActive('/roles') ? activeStyle : {}}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActivePath('/roles') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                style={isActivePath('/roles') ? activeStyle : {}}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 Role
               </Link>
               <Link 
                 href="/permissions" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/permissions') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActive('/permissions') ? activeStyle : {}}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActivePath('/permissions') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                style={isActivePath('/permissions') ? activeStyle : {}}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 Permission

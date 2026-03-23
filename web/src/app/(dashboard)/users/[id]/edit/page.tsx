@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { fetchUsersAction, updateUserAction } from "@/lib/actions";
+import { fetchUsersAction, updateUserAction, fetchRolesAction } from "@/lib/actions";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
@@ -15,6 +15,8 @@ export default function EditUserPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [roles, setRoles] = useState<any[]>([]);
+  const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -29,11 +31,19 @@ export default function EditUserPage() {
   });
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadData = async () => {
       try {
-        const response = await fetchUsersAction();
-        if (response.success) {
-          const users = response.data || [];
+        const [usersResponse, rolesResponse] = await Promise.all([
+          fetchUsersAction(),
+          fetchRolesAction()
+        ]);
+        
+        if (rolesResponse.success) {
+          setRoles(rolesResponse.data || []);
+        }
+        
+        if (usersResponse.success) {
+          const users = usersResponse.data || [];
           const user = users.find((u: any) => u.id === userId);
           if (user) {
             setFormData({
@@ -47,11 +57,13 @@ export default function EditUserPage() {
               status: user.status ?? true,
               remark: user.remark || ""
             });
+            // Assume user has role_ids array
+            setSelectedRoleIds(user.role_ids || []);
           } else {
             setGlobalError("User not found");
           }
         } else {
-          setGlobalError(response.error || "Failed to load user");
+          setGlobalError(usersResponse.error || "Failed to load user");
         }
       } catch (error: any) {
         setGlobalError(error.message);
@@ -59,8 +71,16 @@ export default function EditUserPage() {
         setIsLoading(false);
       }
     };
-    loadUser();
+    loadData();
   }, [userId]);
+
+  const handleRoleToggle = (roleId: string) => {
+    setSelectedRoleIds(prev =>
+      prev.includes(roleId)
+        ? prev.filter(id => id !== roleId)
+        : [...prev, roleId]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +103,8 @@ export default function EditUserPage() {
       const response = await updateUserAction({
         id: userId,
         ...formData,
-        user_type: parseInt(formData.user_type)
+        user_type: parseInt(formData.user_type),
+        role_ids: selectedRoleIds
       });
       
       if (response.success) {
@@ -182,8 +203,7 @@ export default function EditUserPage() {
                               <span>Login Email</span>
                               <span className="text-rose-500 text-lg">*</span>
                            </label>
-                           <input type="email" value={formData.email} onChange={(e) => handleChange('email', e.target.value)} className={`w-full bg-slate-50 border-2 rounded-3xl px-8 py-5 h-[74px] outline-none focus:bg-white transition-all font-bold text-lg ${formErrors.email ? 'border-rose-400 bg-rose-50/20' : 'border-slate-100 focus:border-[#15aabf]'}`} placeholder="identity@org.root" required />
-                           {formErrors.email && <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest px-3">{formErrors.email}</div>}
+                           <input type="email" value={formData.email} onChange={(e) => handleChange('email', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-8 py-5 h-[74px] outline-none focus:bg-white transition-all font-bold text-lg focus:border-[#15aabf]" placeholder="identity@org.root" required />
                         </div>
                         <div className="space-y-3">
                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3">
@@ -204,12 +224,8 @@ export default function EditUserPage() {
                      </div>
                      <div className="grid grid-cols-2 gap-10">
                         <div className="space-y-3">
-                           <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3 flex items-center gap-1.5">
-                              <span>Phone</span>
-                              <span className="text-rose-500 text-lg">*</span>
-                           </label>
-                           <input type="text" value={formData.contact_number} onChange={(e) => handleChange('contact_number', e.target.value)} className={`w-full bg-slate-50 border-2 rounded-3xl px-8 py-5 h-[74px] outline-none focus:bg-white transition-all font-bold ${formErrors.contact_number ? 'border-rose-400' : 'border-slate-100 focus:border-[#15aabf]'}`} placeholder="+95 ..." required />
-                           {formErrors.contact_number && <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest px-3">{formErrors.contact_number}</div>}
+                           <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3">Phone</label>
+                           <input type="text" value={formData.contact_number} onChange={(e) => handleChange('contact_number', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-8 py-5 h-[74px] outline-none focus:border-[#15aabf] focus:bg-white transition-all font-bold" placeholder="+95 ..." />
                         </div>
                         <div className="space-y-3">
                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3">Admin ID</label>
@@ -220,12 +236,8 @@ export default function EditUserPage() {
                            <input type="text" value={formData.company_name} onChange={(e) => handleChange('company_name', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-8 py-5 h-[74px] outline-none focus:border-[#15aabf] focus:bg-white transition-all font-bold" placeholder="Partner Corp." />
                         </div>
                         <div className="space-y-3 col-span-2">
-                           <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3 flex items-center gap-1.5">
-                              <span>Address</span>
-                              <span className="text-rose-500 text-lg">*</span>
-                           </label>
-                           <textarea value={formData.address} onChange={(e) => handleChange('address', e.target.value)} className={`w-full bg-slate-50 border-2 rounded-[2.5rem] px-8 py-6 outline-none focus:bg-white transition-all min-h-[120px] font-medium text-gray-600 ${formErrors.address ? 'border-rose-400' : 'border-slate-100 focus:border-[#15aabf]'}`} placeholder="Street, City, Floor..." required></textarea>
-                           {formErrors.address && <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest px-3">{formErrors.address}</div>}
+                           <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-3">Address</label>
+                           <textarea value={formData.address} onChange={(e) => handleChange('address', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] px-8 py-6 outline-none focus:border-[#15aabf] focus:bg-white transition-all min-h-[120px] font-medium text-gray-600" placeholder="Street, City, Floor..."></textarea>
                         </div>
                      </div>
                   </div>
@@ -255,6 +267,35 @@ export default function EditUserPage() {
                            <input type="text" value={formData.remark} onChange={(e) => handleChange('remark', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] px-8 py-5 h-[74px] outline-none focus:border-[#15aabf] focus:bg-white transition-all font-medium" placeholder="Remark" />
                         </div>
                      </div>
+                  </div>
+
+                  {/* Section: Role Assignment */}
+                  <div className="space-y-8">
+                     <div className="flex items-center gap-4 border-b border-gray-100 pb-4">
+                        <span className="p-2.5 bg-rose-50 rounded-2xl text-rose-500">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </span>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">04 Role Assignment</h3>
+                     </div>
+                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {roles.map((role) => (
+                          <div key={role.id} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-[#15aabf]/30 transition-all cursor-pointer" onClick={() => handleRoleToggle(role.id)}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRoleIds.includes(role.id)}
+                              onChange={() => handleRoleToggle(role.id)}
+                              className="w-5 h-5 rounded border-gray-300 text-[#15aabf] focus:ring-[#15aabf]"
+                            />
+                            <div>
+                              <span className="text-sm font-bold text-gray-800 block">{role.name}</span>
+                              <span className="text-[10px] text-gray-500">{role.status ? 'Active' : 'Inactive'}</span>
+                            </div>
+                          </div>
+                        ))}
+                     </div>
+                     {roles.length === 0 && (
+                       <p className="text-gray-500 text-sm italic">No roles available. Please create roles first.</p>
+                     )}
                   </div>
 
                   <div className="pt-10 flex gap-6">

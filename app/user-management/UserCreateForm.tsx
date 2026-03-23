@@ -102,6 +102,8 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 label="အက်ဒမင်အဆင့်"
                 data={['Super Admin', 'Admin', 'Officer', 'User']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('role')}
               />
               <TextInput
@@ -123,6 +125,8 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 label="ပြည်နယ်/တိုင်း ကုဒ်"
                 data={['4/ - ၄', '12/ - ၁၂', '13/ - ၁၃', '9/ - ၉']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('nrcState')}
               />
               <Select
@@ -130,12 +134,16 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 placeholder="မြို့နယ်ကုဒ်"
                 data={['မြို့နယ်ကုဒ်', 'ဗဟန်း', 'ဒဂုံ']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('nrcTownship')}
               />
               <Select
                 label="အမျိုးအစား"
                 data={['Y (ယာယီ)', 'N (နိုင်)', 'E (ဧည့်)']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('nrcType')}
               />
               <TextInput
@@ -157,6 +165,8 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 label="တိုင်းဒေသကြီး/ပြည်နယ်"
                 data={['Yangon', 'Mandalay', 'Naypyidaw']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('region')}
               />
               <Select
@@ -164,6 +174,8 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 placeholder="ရွေးချယ်ပါ"
                 data={['ရွေးချယ်ပါ']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('city')}
               />
               <Select
@@ -171,6 +183,8 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 placeholder="ရွေးချယ်ပါ"
                 data={['ရွေးချယ်ပါ']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('district')}
               />
               <Select
@@ -178,6 +192,8 @@ export function UserCreateForm({ onCancel, onSubmit }: UserCreateFormProps) {
                 placeholder="ရွေးချယ်ပါ"
                 data={['ရွေးချယ်ပါ']}
                 required
+                searchable
+                clearable
                 {...form.getInputProps('township')}
               />
             </SimpleGrid>

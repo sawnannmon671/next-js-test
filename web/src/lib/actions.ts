@@ -12,6 +12,7 @@ import {
   login,
   getRoles,
   createRole,
+  updateRole,
   getPermissions,
   createPermission
 } from "./grpc";
@@ -107,6 +108,15 @@ export async function fetchRolesAction() {
 export async function createRoleAction(data: any) {
   try {
     const result = await createRole(data);
+    return { success: true, data: result };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateRoleAction(data: any) {
+  try {
+    const result = await updateRole(data);
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
