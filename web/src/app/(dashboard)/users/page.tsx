@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { fetchUsersAction, updateUserAction, deleteUserAction } from "@/lib/actions";
+import { fetchUsersAction, deleteUserAction } from "@/lib/actions";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
@@ -10,21 +10,6 @@ export default function UsersPage() {
   const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Edit Modal State
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    user_type: 0,
-    employee_id: "",
-    company_name: "",
-    contact_number: "",
-    address: "",
-    status: true,
-    remark: ""
-  });
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -35,33 +20,7 @@ export default function UsersPage() {
 
   useEffect(() => { fetchData(); }, []);
 
-  const handleEdit = (user: any) => {
-    setEditingId(user.id);
-    setFormData({
-      email: user.email,
-      password: "", 
-      user_type: user.user_type,
-      employee_id: user.employee_id || "",
-      company_name: user.company_name || "",
-      contact_number: user.contact_number || "",
-      address: user.address || "",
-      status: user.status,
-      remark: user.remark || ""
-    });
-    setIsEditModalOpen(true);
-  };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const response = await updateUserAction({ ...formData, id: editingId });
-    if (response.success) {
-      setIsEditModalOpen(false);
-      setEditingId(null);
-      fetchData();
-    } else {
-      alert(response.error);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Permanently delete this user profile?")) {
@@ -104,10 +63,10 @@ export default function UsersPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Profile Architecture</th>
-                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Classification</th>
-                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Structural Meta</th>
-                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Communication</th>
+                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">User</th>
+                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">User Type</th>
+                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Employee ID / Company</th>
+                    <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact</th>
                     <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
                     <th className="px-12 py-9 text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Settings</th>
                   </tr>
@@ -149,12 +108,12 @@ export default function UsersPage() {
                            <span className="text-[10px] font-black uppercase tracking-widest">{u.status ? 'Active' : 'Locked'}</span>
                         </div>
                       </td>
-                      <td className="px-12 py-9 text-right opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-4 group-hover:translate-x-0">
+                      <td className="px-12 py-9 text-right">
                          <div className="flex justify-end gap-3">
-                           <button onClick={() => handleEdit(u)} className="p-4 bg-white border-2 border-slate-100 text-slate-400 rounded-2xl hover:border-[#15aabf] hover:text-[#15aabf] hover:shadow-xl hover:shadow-[#15aabf]/10 transition-all">
+                           <button onClick={() => router.push(`/users/${u.id}/edit`)} className="p-4 bg-white border-2 border-[#15aabf]/30 text-[#15aabf] rounded-2xl hover:border-[#15aabf] hover:text-[#15aabf] hover:shadow-xl hover:shadow-[#15aabf]/10 transition-all">
                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                            </button>
-                           <button onClick={() => handleDelete(u.id)} className="p-4 bg-white border-2 border-slate-100 text-slate-400 rounded-2xl hover:border-rose-500 hover:text-rose-500 hover:shadow-xl hover:shadow-rose-500/10 transition-all">
+                           <button onClick={() => handleDelete(u.id)} className="p-4 bg-white border-2 border-rose-100 text-rose-500 rounded-2xl hover:border-rose-500 hover:text-rose-500 hover:shadow-xl hover:shadow-rose-500/10 transition-all">
                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                            </button>
                          </div>
@@ -168,38 +127,7 @@ export default function UsersPage() {
         </main>
       </div>
 
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-50 flex items-center justify-center p-8 animate-in fade-in duration-500">
-          <div className="bg-white rounded-[4rem] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
-            <div className="bg-[#15aabf] p-12 text-white flex justify-between items-center">
-              <h2 className="text-4xl font-black tracking-tight">Refine Account</h2>
-              <button onClick={() => setIsEditModalOpen(false)} className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all border-none">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <form onSubmit={handleUpdate} className="p-16 overflow-y-auto custom-scrollbar space-y-12">
-              <div className="grid grid-cols-2 gap-10">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Primary Email</label>
-                  <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-8 py-5 outline-none focus:border-[#15aabf] focus:bg-white font-bold" required />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Contact Link</label>
-                  <input type="text" value={formData.contact_number} onChange={(e) => setFormData({...formData, contact_number: e.target.value})} className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl px-8 py-5 outline-none focus:border-[#15aabf] focus:bg-white font-bold" />
-                </div>
-                <div className="space-y-3 col-span-2">
-                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Physical Location</label>
-                   <textarea value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] px-8 py-6 outline-none focus:border-[#15aabf] focus:bg-white min-h-[100px] font-medium" />
-                </div>
-              </div>
-              <div className="flex gap-4 pt-6">
-                <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-white border-2 border-slate-100 text-slate-400 py-6 rounded-3xl font-black uppercase tracking-widest hover:border-slate-200">Cancel</button>
-                <button type="submit" className="flex-[2] bg-[#15aabf] text-white py-6 rounded-3xl font-black uppercase tracking-widest shadow-xl shadow-[#15aabf]/20">Apply Changes</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
