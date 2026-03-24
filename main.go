@@ -5,13 +5,13 @@ import (
 	"log"
 	"net"
 
-	"google.golang.org/grpc"
 	"go-grpc-next-js-test/api/approval"
 	"go-grpc-next-js-test/api/user"
 	"go-grpc-next-js-test/app/service"
 	"go-grpc-next-js-test/database"
-	"go-grpc-next-js-test/database/seeder"
 	"go-grpc-next-js-test/database/migration"
+	"go-grpc-next-js-test/database/seeder"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -23,7 +23,8 @@ func main() {
 
 	// Seed Initial Data
 	seeder.SeedApprovalStatus()
-	
+	seeder.RemoveViewPermissions()
+
 	fmt.Println("Starting gRPC Server on :50051...")
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

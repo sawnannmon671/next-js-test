@@ -120,7 +120,12 @@ export const getPermissions = (): Promise<any> => {
     if (!permissionClient) return reject(new Error("Permission service not found in proto"));
     permissionClient.GetPermissionList({}, (err: any, response: any) => {
       if (err) reject(err);
-      else resolve(response.permissions || []);
+      else {
+        const permissions = response.permissions || [];
+        // Filter out all permissions ending with '.view'
+        const filtered = permissions.filter((p: any) => !p.code.endsWith('.view'));
+        resolve(filtered);
+      }
     });
   });
 };
