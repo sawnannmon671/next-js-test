@@ -130,6 +130,7 @@ export default function EditRolePage() {
 
     const errors: Record<string, string> = {};
     if (!formData.name) errors.name = "Role name is required";
+    if (selectedPermissionIds.length === 0) errors.permissions = "At least one permission should be selected";
     
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -272,8 +273,11 @@ export default function EditRolePage() {
                           </span>
                           <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Permissions</h3>
                        </div>
-                       
-                       {permissions.length === 0 ? (
+                        
+                        {formErrors.permissions && (
+                          <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest px-3">{formErrors.permissions}</div>
+                        )}
+                        {permissions.length === 0 ? (
                          <p className="text-gray-500 text-sm italic">No permissions available. Please seed permissions first.</p>
                        ) : (
                           <div className="space-y-8">
@@ -287,7 +291,7 @@ export default function EditRolePage() {
                                 onClick={(e) => e.stopPropagation()}
                               />
                               <h4 className="text-sm font-bold text-gray-800">Select All</h4>
-                              <span className="ml-auto text-xs text-gray-400">{permissions.length} permissions</span>
+                              <span className="ml-auto text-xs text-gray-400">{selectedPermissionIds.length} / {permissions.length} selected</span>
                             </div>
                            {groupedPermissions.map((group) => (
                              <div key={group.category} className="space-y-4">

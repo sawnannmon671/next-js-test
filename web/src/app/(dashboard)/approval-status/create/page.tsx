@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { createStatusAction } from "@/lib/actions";
+import { createStatusAction, fetchPermissionsAction } from "@/lib/actions";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 
@@ -18,6 +18,78 @@ export default function CreateApprovalStatusPage() {
     status: true,
     remark: ""
   });
+
+  const [permissions, setPermissions] = useState<any[]>([]);
+  const [selectedPermissionIds, setSelectedPermissionIds] = useState<string[]>([]);
+
+  // Fetch permissions on mount
+  useEffect(() => {
+    const loadPermissions = async () => {
+      const response = await fetchPermissionsAction();
+      if (response.success) setPermissions(response.data || []);
+    };
+    loadPermissions();
+  }, []);
+
+  const handlePermissionToggle = (permissionId: string) => {
+    setSelectedPermissionIds(prev =>
+      prev.includes(permissionId)
+        ? prev.filter(id => id !== permissionId)
+        : [...prev, permissionId]
+    );
+  };
+
+  const groupedPermissions = useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    permissions.forEach(p => {
+      const category = p.code?.split('.')[0] || 'other';
+      if (!groups[category]) groups[category] = [];
+      groups[category].push(p);
+    });
+    const order = ['approval_status', 'permissions', 'roles', 'users'];
+    const sortedCategories = Object.keys(groups).sort((a, b) => {
+      const aIndex = order.indexOf(a);
+      const bIndex = order.indexOf(b);
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return a.localeCompare(b);
+    });
+    return sortedCategories.map(category => ({
+      category,
+      label: category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      permissions: groups[category]
+    }));
+  }, [permissions]);
+
+  const toggleGroup = (groupPermissions: any[]) => {
+    const groupIds = groupPermissions.map(p => p.id);
+    const allSelected = groupIds.every(id => selectedPermissionIds.includes(id));
+    if (allSelected) {
+      setSelectedPermissionIds(prev => prev.filter(id => !groupIds.includes(id)));
+    } else {
+      setSelectedPermissionIds(prev => [...new Set([...prev, ...groupIds])]);
+    }
+  };
+
+  const isGroupSelected = (groupPermissions: any[]) => {
+    const groupIds = groupPermissions.map(p => p.id);
+    return groupIds.length > 0 && groupIds.every(id => selectedPermissionIds.includes(id));
+  };
+
+  const toggleAllPermissions = () => {
+    const allIds = permissions.map(p => p.id);
+    const allSelected = allIds.every(id => selectedPermissionIds.includes(id));
+    if (allSelected) {
+      setSelectedPermissionIds([]);
+    } else {
+      setSelectedPermissionIds(allIds);
+    }
+  };
+
+  const isAllSelected = () => {
+    return permissions.length > 0 && permissions.every(p => selectedPermissionIds.includes(p.id));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +107,7 @@ export default function CreateApprovalStatusPage() {
     }
 
     try {
-      const response = await createStatusAction(formData);
+      const response = await createStatusAction({ ...formData, permission_ids: selectedPermissionIds });
       if (response.success) {
         router.push("/approval-status");
       } else {
@@ -153,9 +225,70 @@ export default function CreateApprovalStatusPage() {
                            <textarea value={formData.remark} onChange={(e) => handleChange('remark', e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] px-8 py-6 outline-none focus:border-[#15aabf] focus:bg-white transition-all min-h-[120px] font-medium text-gray-600" placeholder="Describe this stage or internal purpose..."></textarea>
                         </div>
                      </div>
-                  </div>
+                   </div>
 
-                  <div className="pt-10 flex gap-6">
+                   {/* Section: Permissions */}
+                   <div className="space-y-8">
+                      <div className="flex items-center gap-4 border-b border-gray-100 pb-4">
+                         <span className="p-2.5 bg-amber-50 rounded-2xl text-amber-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                         </span>
+                         <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Permissions</h3>
+                      </div>
+                      
+                      {permissions.length === 0 ? (
+                        <p className="text-gray-500 text-sm italic">No permissions available. Please seed permissions first.</p>
+                      ) : (
+                        <div className="space-y-8">
+                          {/* Select All checkbox */}
+                          <div className="flex items-center gap-3 py-2 cursor-pointer" onClick={toggleAllPermissions}>
+                            <input
+                              type="checkbox"
+                              checked={isAllSelected()}
+                              onChange={toggleAllPermissions}
+                              className="w-5 h-5 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <h4 className="text-sm font-bold text-gray-800">Select All</h4>
+                            <span className="ml-auto text-xs text-gray-400">{selectedPermissionIds.length} / {permissions.length} selected</span>
+                          </div>
+                          {groupedPermissions.map((group) => (
+                            <div key={group.category} className="space-y-4">
+                              <div className="flex items-center gap-3 py-2 cursor-pointer" onClick={() => toggleGroup(group.permissions)}>
+                                <input
+                                  type="checkbox"
+                                  checked={isGroupSelected(group.permissions)}
+                                  onChange={() => toggleGroup(group.permissions)}
+                                  className="w-5 h-5 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                                <h4 className="text-sm font-bold text-gray-800">{group.label}</h4>
+                                <span className="ml-auto text-xs text-gray-400">{group.permissions.length} permissions</span>
+                              </div>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                {group.permissions.map((permission) => (
+                                  <div key={permission.id} className="flex items-center gap-3 py-2 cursor-pointer" onClick={() => handlePermissionToggle(permission.id)}>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedPermissionIds.includes(permission.id)}
+                                      onChange={() => handlePermissionToggle(permission.id)}
+                                      className="w-5 h-5 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
+                                      onClick={(e) => e.stopPropagation()}
+                                    />
+                                    <div>
+                                      <span className="text-sm font-bold text-gray-800 block">{permission.code}</span>
+                                      <span className="text-[10px] text-gray-500">{permission.name}</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                   </div>
+
+                   <div className="pt-10 flex gap-6">
                      <button 
                         type="button" 
                         onClick={() => router.push("/approval-status")}

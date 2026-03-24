@@ -21,6 +21,7 @@ message ApprovalStatus {
   string remark = 5;
   string created_at = 6;
   string updated_at = 7;
+  repeated string permission_ids = 8;
 }
 
 message ApprovalStatusListResponse {
@@ -32,6 +33,7 @@ message CreateApprovalStatusRequest {
   int32 approval_type = 2;
   bool status = 3;
   string remark = 4;
+  repeated string permission_ids = 5;
 }
 
 message UpdateApprovalStatusRequest {
@@ -40,6 +42,7 @@ message UpdateApprovalStatusRequest {
   int32 approval_type = 3;
   bool status = 4;
   string remark = 5;
+  repeated string permission_ids = 6;
 }
 
 message DeleteApprovalStatusRequest {

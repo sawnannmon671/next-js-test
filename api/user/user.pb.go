@@ -866,6 +866,7 @@ type CreateRoleRequest struct {
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Status        bool                   `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
+	PermissionIds []string               `protobuf:"bytes,4,rep,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -921,12 +922,20 @@ func (x *CreateRoleRequest) GetRemark() string {
 	return ""
 }
 
+func (x *CreateRoleRequest) GetPermissionIds() []string {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
+}
+
 type UpdateRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Status        bool                   `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	PermissionIds []string               `protobuf:"bytes,5,rep,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -987,6 +996,13 @@ func (x *UpdateRoleRequest) GetRemark() string {
 		return x.Remark
 	}
 	return ""
+}
+
+func (x *UpdateRoleRequest) GetPermissionIds() []string {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
 }
 
 type DeleteRoleRequest struct {
@@ -1443,16 +1459,18 @@ const file_user_proto_rawDesc = "" +
 	".user.RoleR\x04role\"4\n" +
 	"\x10RoleListResponse\x12 \n" +
 	"\x05roles\x18\x01 \x03(\v2\n" +
-	".user.RoleR\x05roles\"W\n" +
+	".user.RoleR\x05roles\"~\n" +
 	"\x11CreateRoleRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\bR\x06status\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"g\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\x12%\n" +
+	"\x0epermission_ids\x18\x04 \x03(\tR\rpermissionIds\"\x8e\x01\n" +
 	"\x11UpdateRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\bR\x06status\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"#\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\x12%\n" +
+	"\x0epermission_ids\x18\x05 \x03(\tR\rpermissionIds\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"z\n" +
 	"\x12PermissionResponse\x12\x18\n" +

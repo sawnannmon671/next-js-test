@@ -115,6 +115,7 @@ message CreateRoleRequest {
   string name = 1;
   bool status = 2;
   string remark = 3;
+  repeated string permission_ids = 4;
 }
 
 message UpdateRoleRequest {
@@ -122,6 +123,7 @@ message UpdateRoleRequest {
   string name = 2;
   bool status = 3;
   string remark = 4;
+  repeated string permission_ids = 5;
 }
 
 message DeleteRoleRequest {

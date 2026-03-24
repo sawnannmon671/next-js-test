@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 
-	"go-grpc-next-js-test/app/models"
 	"github.com/uptrace/bun"
+	"go-grpc-next-js-test/app/models"
 )
 
 func MigrateRBAC(db *bun.DB) {
 	ctx := context.Background()
 
 	// Register models for relations
-	db.RegisterModel((*models.UserRole)(nil), (*models.RolePermission)(nil))
+	db.RegisterModel((*models.UserRole)(nil), (*models.RolePermission)(nil), (*models.ApprovalStatusPermission)(nil))
 
 	modelsToCreate := []interface{}{
 		(*models.User)(nil),
@@ -21,6 +21,7 @@ func MigrateRBAC(db *bun.DB) {
 		(*models.Permission)(nil),
 		(*models.UserRole)(nil),
 		(*models.RolePermission)(nil),
+		(*models.ApprovalStatusPermission)(nil),
 	}
 
 	for _, model := range modelsToCreate {

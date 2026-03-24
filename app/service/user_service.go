@@ -295,16 +295,122 @@ func (s *UserServer) CreateRole(ctx context.Context, req *user.CreateRoleRequest
 		return &user.RoleResponse{Success: false, Message: err.Error()}, nil
 	}
 
+	// Assign permissions
+	if len(req.PermissionIds) > 0 {
+		for _, permIdStr := range req.PermissionIds {
+			permId, err := uuid.Parse(permIdStr)
+			if err != nil {
+				return &user.RoleResponse{Success: false, Message: "Invalid permission ID: " + permIdStr}, nil
+			}
+			rolePermission := &models.RolePermission{
+				ID:           uuid.New(),
+				RoleID:       newRole.ID,
+				PermissionID: permId,
+			}
+			_, err = database.BunDB.NewInsert().Model(rolePermission).Exec(ctx)
+			if err != nil {
+				return &user.RoleResponse{Success: false, Message: "Failed to assign permission: " + err.Error()}, nil
+			}
+		}
+	}
+
+	// Fetch created role with permissions
+	var createdRole models.Role
+	err = database.BunDB.NewSelect().Model(&createdRole).Where("id = ?", newRole.ID).Relation("Permissions").Scan(ctx)
+	if err != nil {
+		return &user.RoleResponse{Success: false, Message: "Failed to fetch created role: " + err.Error()}, nil
+	}
+
+	// Convert permission IDs to string slice
+	var permissionIds []string
+	for _, p := range createdRole.Permissions {
+		permissionIds = append(permissionIds, p.ID.String())
+	}
+
 	return &user.RoleResponse{
 		Success: true,
 		Message: "Role created",
-		Role:    &user.Role{Id: newRole.ID.String(), Name: newRole.Name},
+		Role: &user.Role{
+			Id:            createdRole.ID.String(),
+			Name:          createdRole.Name,
+			Status:        createdRole.Status,
+			Remark:        createdRole.Remark,
+			CreatedAt:     createdRole.CreatedAt.Format("2006-01-02 15:04:05"),
+			PermissionIds: permissionIds,
+		},
 	}, nil
 }
 
 // Role Update
 func (s *UserServer) UpdateRole(ctx context.Context, req *user.UpdateRoleRequest) (*user.RoleResponse, error) {
-	return &user.RoleResponse{Success: false, Message: "Not implemented yet"}, nil
+	id, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	updateRole := &models.Role{
+		ID:     id,
+		Name:   req.Name,
+		Status: req.Status,
+		Remark: req.Remark,
+	}
+
+	_, err = database.BunDB.NewUpdate().Model(updateRole).Where("id = ?", id).Exec(ctx)
+	if err != nil {
+		return &user.RoleResponse{Success: false, Message: err.Error()}, nil
+	}
+
+	// Update permission assignments
+	// First, delete existing permission assignments for this role
+	_, err = database.BunDB.NewDelete().Model((*models.RolePermission)(nil)).Where("role_id = ?", id).Exec(ctx)
+	if err != nil {
+		return &user.RoleResponse{Success: false, Message: "Failed to clear existing permissions: " + err.Error()}, nil
+	}
+
+	// Insert new permission assignments
+	if len(req.PermissionIds) > 0 {
+		for _, permIdStr := range req.PermissionIds {
+			permId, err := uuid.Parse(permIdStr)
+			if err != nil {
+				return &user.RoleResponse{Success: false, Message: "Invalid permission ID: " + permIdStr}, nil
+			}
+			rolePermission := &models.RolePermission{
+				ID:           uuid.New(),
+				RoleID:       id,
+				PermissionID: permId,
+			}
+			_, err = database.BunDB.NewInsert().Model(rolePermission).Exec(ctx)
+			if err != nil {
+				return &user.RoleResponse{Success: false, Message: "Failed to assign permission: " + err.Error()}, nil
+			}
+		}
+	}
+
+	// Fetch updated role with permissions to return
+	var updatedRole models.Role
+	err = database.BunDB.NewSelect().Model(&updatedRole).Where("id = ?", id).Relation("Permissions").Scan(ctx)
+	if err != nil {
+		return &user.RoleResponse{Success: false, Message: "Failed to fetch updated role: " + err.Error()}, nil
+	}
+
+	// Convert permission IDs to string slice
+	var permissionIds []string
+	for _, p := range updatedRole.Permissions {
+		permissionIds = append(permissionIds, p.ID.String())
+	}
+
+	return &user.RoleResponse{
+		Success: true,
+		Message: "Role updated",
+		Role: &user.Role{
+			Id:            updatedRole.ID.String(),
+			Name:          updatedRole.Name,
+			Status:        updatedRole.Status,
+			Remark:        updatedRole.Remark,
+			CreatedAt:     updatedRole.CreatedAt.Format("2006-01-02 15:04:05"),
+			PermissionIds: permissionIds,
+		},
+	}, nil
 }
 
 // Role Delete

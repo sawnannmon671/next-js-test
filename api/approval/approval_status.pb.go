@@ -66,6 +66,7 @@ type ApprovalStatus struct {
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PermissionIds []string               `protobuf:"bytes,8,rep,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -149,6 +150,13 @@ func (x *ApprovalStatus) GetUpdatedAt() string {
 	return ""
 }
 
+func (x *ApprovalStatus) GetPermissionIds() []string {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
+}
+
 type ApprovalStatusListResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Statuses      []*ApprovalStatus      `protobuf:"bytes,1,rep,name=statuses,proto3" json:"statuses,omitempty"`
@@ -199,6 +207,7 @@ type CreateApprovalStatusRequest struct {
 	ApprovalType  int32                  `protobuf:"varint,2,opt,name=approval_type,json=approvalType,proto3" json:"approval_type,omitempty"`
 	Status        bool                   `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	PermissionIds []string               `protobuf:"bytes,5,rep,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -261,6 +270,13 @@ func (x *CreateApprovalStatusRequest) GetRemark() string {
 	return ""
 }
 
+func (x *CreateApprovalStatusRequest) GetPermissionIds() []string {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
+}
+
 type UpdateApprovalStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -268,6 +284,7 @@ type UpdateApprovalStatusRequest struct {
 	ApprovalType  int32                  `protobuf:"varint,3,opt,name=approval_type,json=approvalType,proto3" json:"approval_type,omitempty"`
 	Status        bool                   `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
+	PermissionIds []string               `protobuf:"bytes,6,rep,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -335,6 +352,13 @@ func (x *UpdateApprovalStatusRequest) GetRemark() string {
 		return x.Remark
 	}
 	return ""
+}
+
+func (x *UpdateApprovalStatusRequest) GetPermissionIds() []string {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
 }
 
 type DeleteApprovalStatusRequest struct {
@@ -498,7 +522,7 @@ var File_approval_status_proto protoreflect.FileDescriptor
 const file_approval_status_proto_rawDesc = "" +
 	"\n" +
 	"\x15approval_status.proto\x12\bapproval\"\a\n" +
-	"\x05Empty\"\xc7\x01\n" +
+	"\x05Empty\"\xee\x01\n" +
 	"\x0eApprovalStatus\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
@@ -508,20 +532,23 @@ const file_approval_status_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\tR\tupdatedAt\"R\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\x12%\n" +
+	"\x0epermission_ids\x18\b \x03(\tR\rpermissionIds\"R\n" +
 	"\x1aApprovalStatusListResponse\x124\n" +
-	"\bstatuses\x18\x01 \x03(\v2\x18.approval.ApprovalStatusR\bstatuses\"\x86\x01\n" +
+	"\bstatuses\x18\x01 \x03(\v2\x18.approval.ApprovalStatusR\bstatuses\"\xad\x01\n" +
 	"\x1bCreateApprovalStatusRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12#\n" +
 	"\rapproval_type\x18\x02 \x01(\x05R\fapprovalType\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\bR\x06status\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"\x96\x01\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\x12%\n" +
+	"\x0epermission_ids\x18\x05 \x03(\tR\rpermissionIds\"\xbd\x01\n" +
 	"\x1bUpdateApprovalStatusRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12#\n" +
 	"\rapproval_type\x18\x03 \x01(\x05R\fapprovalType\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\bR\x06status\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\"-\n" +
+	"\x06remark\x18\x05 \x01(\tR\x06remark\x12%\n" +
+	"\x0epermission_ids\x18\x06 \x03(\tR\rpermissionIds\"-\n" +
 	"\x1bDeleteApprovalStatusRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"~\n" +
 	"\x16ApprovalStatusResponse\x12\x18\n" +
