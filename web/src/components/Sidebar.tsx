@@ -12,12 +12,12 @@ const Sidebar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
 
-  // Sync open state with current path on mount or change
+// Sync open state with current path on mount or change
   useEffect(() => {
     if (pathname === '/' || pathname === '/application') {
       setIsDashboardOpen(true);
     }
-    if (pathname === '/settings' || pathname === '/approval-status') {
+    if (pathname === '/settings' || pathname === '/approval-status' || pathname.startsWith('/settings/')) {
       setIsSettingsOpen(true);
     }
     if (isActivePath('/users') || isActivePath('/roles')) {
@@ -160,14 +160,22 @@ const Sidebar = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2H2v10h10V2z"/><path d="M12 12H2v10h10V12z"/><path d="M22 2h-10v10h10V2z"/><path d="M22 12h-10v10h10V12z"/></svg>
                 Approval Status
               </Link>
-              <Link 
-                href="/settings" 
-                className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/settings') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                style={isActive('/settings') ? activeStyle : {}}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.35-.31 1.55-.56.19-.23.28-.56.19-1a4.99 4.99 0 0 1 4.56-6.69A2.01 2.01 0 0 0 22 11.77V12c0-5.5-4.5-10-10-10z"/></svg>
-                Theme Customization
-              </Link>
+          <Link 
+            href="/settings" 
+            className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActive('/settings') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+            style={isActive('/settings') ? activeStyle : {}}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.35-.31 1.55-.56.19-.23.28-.56.19-1a4.99 4.99 0 0 1 4.56-6.69A2.01 2.01 0 0 0 22 11.77V12c0-5.5-4.5-10-10-10z"/></svg>
+            Theme Customization
+          </Link>
+          <Link 
+            href="/settings/location" 
+            className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs transition-all no-underline ${isActivePath('/settings/location') ? '' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+            style={isActivePath('/settings/location') ? activeStyle : {}}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
+            Location Management
+          </Link>
             </div>
           )}
         </div>
